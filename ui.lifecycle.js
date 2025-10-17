@@ -1,8 +1,3 @@
-/*
-*************************************************************************
- Version: 1.5 • Updated: 2025-10-10 • File: release-main/ui.lifecycle.js 
-*************************************************************************
-*/
 (function(){
   function afterAnswer(){
     try{
@@ -33,7 +28,6 @@
   hook('onIDontKnow', afterAnswer);
   hook('nextWord', afterAnswer);
 
-  // wrap set change
   try{
     if (window.App && App.Sets && typeof App.Sets.setActiveSetIndex === 'function'){
       var _set = App.Sets.setActiveSetIndex;
@@ -45,9 +39,7 @@
     }
   }catch(e){}
 })();
-/* -------------------------------  К О Н Е Ц  ------------------------------- */
 
-/* ---- MERGED FROM: app.addon.startup.js, startup.manager.js ---- */
 /*!
  * app.addon.startup.js — Lexitron
  * Version: 1.5.0
@@ -72,8 +64,6 @@
     }
   });
 })();
-/* -------------------------------  К О Н Е Ц  ------------------------------- */
-
 
 /*!
  * startup.manager.js — Lexitron
@@ -117,7 +107,6 @@
     deckExists(key){
       try{
         if (!key) return false;
-        // virtual decks should be treated as existing
         if (key==='fav' || key==='favorites' || key==='mistakes') return true;
         if (window.App && App.Decks && typeof App.Decks.resolveDeckByKey==='function'){
           const arr = App.Decks.resolveDeckByKey(key);
@@ -127,7 +116,6 @@
       try { return key && window.decks && Array.isArray(window.decks[key]); } catch(_){ return false; }
     },
 
-    
     deckNonEmpty(key){
       try{
         if (!key) return false;
@@ -184,7 +172,6 @@
 
     validateAndFix(initial){
       let { uiLang, studyLang, deckKey } = initial;
-      // Apply UI lang early
       try{ if (window.App && App.settings) App.settings.lang = uiLang; M.set(LS.uiLang, uiLang); }catch(_){}
 
       if (M.deckNonEmpty(deckKey)){
@@ -213,7 +200,7 @@
     },
 
     boot(state){
-      if (!state.deckKey){(void 0); 
+      if (!state.deckKey){(void 0);
         alert('Нет доступных словарей для старта.');
         return;
       }
@@ -251,5 +238,3 @@
     }
   });
 })();
-/* -------------------------------  К О Н Е Ц  ------------------------------- */
-

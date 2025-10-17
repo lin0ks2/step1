@@ -1,32 +1,16 @@
-/*
-*****************************************************************
- Version: 1.5 • Updated: 2025-10-10 • File: release-main/i18n.js 
-*****************************************************************
-*/
 (function(){
   'use strict';
 
-  // -------------------------------------------------------------------------
-  // Public i18n bag. Access via App.i18n() in app.core.js
-  // -------------------------------------------------------------------------
   window.I18N = {
-    // -----------------------------------------------------------------------
-    // RU — Russian
-    // -----------------------------------------------------------------------
     ru: {
-      // App & brand
       appTitle: "Lexitron",
       tagline: "Он научит!",
-      
-      
-      
-      
+
       modeHard: "Сложный режим",
 modeNormal: "Обычный режим",
 donateTitle: "Поддержать проект",
 settingsTitle: "Настройки",
       settingsInDev: "",
-      // --- Confirm modal ---
       confirmTitle: "Подтверждение",
       confirmOk: "ОК",
       confirmCancel: "Отмена",
@@ -34,21 +18,15 @@ settingsTitle: "Настройки",
       confirmFavReset: "Очистить «Избранное» для активного языка? Действие нельзя отменить.",
       confirmMistakesReset: "Очистить «Мои ошибки» для активного языка? Действие нельзя отменить.",
 
-
-
-
-      // Core UI labels
       ok: "OK",
       choose: "Выберите перевод",
       iDontKnow: "Не знаю",
 
-      // Header / controls
       modalTitle: "Словари",
       dictsHeader: "Словари",
       langLabel: "Язык",
       repeatLabel: "Сложность",
       themeLabel: "Тема",
-      // Tooltips (header controls)
       tt_ui_theme: "Тема",
       tt_ui_lang: "Язык интерфейса",
       tt_dicts: "Словари",
@@ -57,20 +35,17 @@ settingsTitle: "Настройки",
       tt_support: "Поддержка",
       tt_settings: "Настройки",
 
-      // Stats & badges
       totalWords: "Всего слов в словаре",
       learned: "Выучено",
       errors: "Ошибок",
       badgeSetWords: "Слов в наборе",
       badgeLearned: "Выучено",
 
-      // Virtual decks
       mistakesName: "Мои ошибки",
       allMistakesDone: "Все ошибки закрыты!",
       favTitle: "Избранное",
       ttPreview: "Предпросмотр",
 
-      // Parts of speech (POS)
       pos_verbs: "Глаголы",
       pos_nouns: "Существительные",
       pos_adjs: "Прилагательные",
@@ -82,7 +57,6 @@ settingsTitle: "Настройки",
       pos_numbers: "Числительные",
       pos_misc: "Словарь",
 
-      // Info modal (Instruction)
       infoTitle: "Инструкция",
       infoSteps: [
         "Запоминайте слова — увидели слово — выберите перевод.",
@@ -95,23 +69,15 @@ settingsTitle: "Настройки",
       notLicensed: "Не зарегистрировано",
     },
 
-    // -----------------------------------------------------------------------
-    // UK — Ukrainian
-    // -----------------------------------------------------------------------
     uk: {
-      // App & brand
       appTitle: "Lexitron",
       tagline: "Він навчить!",
-      
-      
-      
-      
+
       modeHard: "Складний режим",
 modeNormal: "Звичайний режим",
 donateTitle: "Підтримати проєкт",
 settingsTitle: "Налаштування",
       settingsInDev: "",
-      // --- Confirm modal ---
       confirmTitle: "Підтвердження",
       confirmOk: "ОК",
       confirmCancel: "Скасувати",
@@ -119,21 +85,15 @@ settingsTitle: "Налаштування",
       confirmFavReset: "Очистити «Обране» для активної мови? Дію не можна скасувати.",
       confirmMistakesReset: "Очистити «Мої помилки» для активної мови? Дію не можна скасувати.",
 
-
-
-
-      // Core UI labels
       ok: "OK",
       choose: "Оберіть переклад",
       iDontKnow: "Не знаю",
 
-      // Header / controls
       modalTitle: "Словники",
       dictsHeader: "Словники",
       langLabel: "Мова",
       repeatLabel: "Складність",
       themeLabel: "Тема",
-      // Підказки (кнопки в шапці)
       tt_ui_theme: "Тема",
       tt_ui_lang: "Мова інтерфейсу",
       tt_dicts: "Словники",
@@ -142,20 +102,17 @@ settingsTitle: "Налаштування",
       tt_support: "Підтримка",
       tt_settings: "Налаштування",
 
-      // Stats & badges
       totalWords: "Всього слів в словнику",
       learned: "Вивчено",
       errors: "Помилок",
       badgeSetWords: "Слів у наборі",
       badgeLearned: "Вивчено",
 
-      // Virtual decks
       mistakesName: "Мої помилки",
       allMistakesDone: "Усі помилки закриті!",
       favTitle: "Обране",
       ttPreview: "Попередній перегляд",
 
-      // Parts of speech (POS)
       pos_verbs: "Дієслова",
       pos_nouns: "Іменники",
       pos_adjs: "Прикметники",
@@ -167,7 +124,6 @@ settingsTitle: "Налаштування",
       pos_numbers: "Числівники",
       pos_misc: "Словник",
 
-      // Info modal (Instruction)
       infoTitle: "Інструкція",
       infoSteps: [
         "Запам’ятовуйте слова — побачили слово — оберіть переклад.",
@@ -181,10 +137,6 @@ settingsTitle: "Налаштування",
     },
   };
 
-  // -------------------------------------------------------------------------
-  // Legacy interop: if the app uses App.locales for language-picker labels,
-  // extend them here (non-breaking). This keeps old code working.
-  // -------------------------------------------------------------------------
   try {
     if (window.App && App.locales) {
       App.locales.ru = Object.assign(App.locales.ru||{}, { allLangs: "Все языки",  lang_sr: "Сербский" });
@@ -194,7 +146,6 @@ settingsTitle: "Налаштування",
 
 })();
 
-/* BACKUP KEYS v1.6.1 */
 (function(){
   try{
     var I = window.I18N || {};
@@ -227,7 +178,6 @@ settingsTitle: "Налаштування",
     });
   }catch(_){}
 })();
-// LEXITRON: added modeSelection caption
 (function(){
   try{
     var I = window.I18N || {};

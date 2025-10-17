@@ -1,8 +1,3 @@
-/*
-**************************************************************************
- Version: 1.5 • Updated: 2025-10-10 • File: release-main/app.favorites.js 
-**************************************************************************
-*/
 (function(){
   var App = window.App || (window.App = {});
   var PROG_KEY = 'favorites.progress.v1';
@@ -99,9 +94,6 @@
   };
 })();
 
-/* merged from app.favorites.patch.js */
-
-/* app.favorites.patch.js — scoped clear for favorites per dict language */
 (function(){
   const App = window.App || (window.App = {});
 
@@ -132,15 +124,11 @@
     }catch(e){}
   };
 
-  // Keep global clear as a compatibility fallback
   App.clearFavoritesAll = App.clearFavoritesAll || function(){
     try { if (App.state) App.state.favorites_v2 = {}; App.saveState && App.saveState(); } catch(e){}
   };
 })();
 
-/* merged patch: app.favorites.patch.js */
-
-/* app.favorites.patch.js — scoped clear for favorites per dict language */
 (function(){
   const App = window.App || (window.App = {});
 
@@ -171,9 +159,7 @@
     }catch(e){}
   };
 
-  // Keep global clear as a compatibility fallback
   App.clearFavoritesAll = App.clearFavoritesAll || function(){
     try { if (App.state) App.state.favorites_v2 = {}; App.saveState && App.saveState(); } catch(e){}
   };
 })();
-/* -------------------------------  К О Н Е Ц  ------------------------------- */

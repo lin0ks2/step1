@@ -1,16 +1,9 @@
-/*
-************************************************************************
- Version: 1.5 • Updated: 2025-10-10 • File: release-main/app.trainer.js 
-************************************************************************
-*/
 (function(){
   const App = window.App || (window.App = {});
 
-  // ───────── базовые параметры ─────────
   function starsMax(){ return 5; }
   function unlockThreshold(){ try{ return (App.Config && App.Config.reverseThreshold) || 2.5; }catch(_){ return 2.5; } }
 
-  // ───────── веса выбора карточки ─────────
   function weightForWord(w){
     try{
       const sMax = starsMax();
@@ -21,7 +14,6 @@
       const recency = Math.min(elapsedMin/3, 5);
       let wgt = Math.max(0.1, 1 + 2*deficit + recency);
 
-      // Мягкое усиление с учётом неудач/idk (если Penalties есть)
       if (App.Penalties && typeof App.Penalties.weightFor === 'function') {
         try { wgt *= Math.max(1, App.Penalties.weightFor(w.id)); } catch(_){}
       }
@@ -49,7 +41,6 @@
     return Math.floor(Math.random()*deck.length);
   }
 
-  // ───────── поддержка наборов ─────────
   function getSetSize(/*deckKey*/){
     try{ return (App.Config && App.Config.setSizeDefault) || 50; }catch(_){ return 50; }
   }
@@ -131,7 +122,6 @@
     return slice.length ? slice : deck;
   }
 
-  // анти-повтор последних показов (на уровне Trainer)
   var _recentShown = []; var _K = 5;
   function rememberShown(id){
     try{
@@ -144,12 +134,10 @@
     }catch(_){}
   }
 
-  // ───────── экспорт API ─────────
   App.Trainer = Object.assign({}, App.Trainer || {}, {
     starsMax,
     unlockThreshold,
     sampleNextIndexWeighted,
-    // наборы:
     getSetSize,
     getBatchIndex,
     setBatchIndex,

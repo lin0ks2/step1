@@ -1,8 +1,3 @@
-/*
-*********************************************************************
- Version: 1.5 • Updated: 2025-10-10 • File: release-main/app.core.js 
-*********************************************************************
-*/
 (function(){
   const App = window.App = (window.App||{});
   App.APP_VER = '1.6.0';
@@ -11,7 +6,6 @@
   const LS_STATE    = 'k_state_v1_3_1';
   const LS_DICTS    = 'k_dicts_v1_3_1';
 
-  // Fallback + external
   const I18N_FALLBACK = window.I18N;
 
   App.settings = loadSettings();
@@ -19,7 +13,6 @@
     index:0,lastIndex:-1,favorites:{},stars:{},successes:{},
     lastShownWordId:null, totals:{shown:0,errors:0}, lastSeen:{}
   };
-/* ---- Stars key helper (deck-scoped) ---- */
 App._deckKey = function(){ try{ return (App.dictRegistry && App.dictRegistry.activeKey) || ''; }catch(_){ return ''; } };
 App.starKey = function(wid, dk){
   dk = dk || App._deckKey();
@@ -27,14 +20,12 @@ App.starKey = function(wid, dk){
 };
 
   App.dictRegistry = loadDictRegistrySafe();
-  // ensure map of last used dictionary per language exists (migration-safe)
   try{
     if (!App.dictRegistry || typeof App.dictRegistry !== 'object') App.dictRegistry = { activeKey:null, user:{}, lastByLang:{} };
     if (!App.dictRegistry.user || typeof App.dictRegistry.user !== 'object') App.dictRegistry.user = {};
     if (!App.dictRegistry.lastByLang || typeof App.dictRegistry.lastByLang !== 'object') App.dictRegistry.lastByLang = {};
   }catch(_){}
 
-  // ── миграция под наборы: setSize=50 по умолчанию, map под активные наборы ──
   (function migrateSets(){
     let ss = 50;
     try { ss = Number(App.state.setSize); } catch(e){}
@@ -46,9 +37,7 @@ App.starKey = function(wid, dk){
     }
   })();
 
-  
   App.i18n = function(lang){
-    // Return language pack by code; fallback to I18N_FALLBACK.uk
     try{
       lang = (lang || (App.settings && (App.settings.uiLang || App.settings.lang)) || 'uk').toLowerCase();
       const base = (I18N_FALLBACK && I18N_FALLBACK[lang]) ? I18N_FALLBACK[lang] : (I18N_FALLBACK && I18N_FALLBACK.uk) || {};
@@ -56,8 +45,6 @@ App.starKey = function(wid, dk){
     }catch(_){ return (I18N_FALLBACK && I18N_FALLBACK.uk) || {}; }
   };
 
-  // Apply localized tooltips from App.i18n() for elements with [data-title-key]
-  
 App.applyI18nTitles = function(root){
   try{
     var lang = (App && App.settings && (App.settings.uiLang || App.settings.lang)) ||
@@ -80,20 +67,17 @@ App.applyI18nTitles = function(root){
   }catch(_){}
 };;
 
-// Apply i18n titles once at startup (no polling, no hover listeners)
 try{
   if (document.readyState !== 'loading') { App.applyI18nTitles(); }
   else { document.addEventListener('DOMContentLoaded', function(){ try{ App.applyI18nTitles(); }catch(_){} }); }
 }catch(_){}
 ;
 
-  // Apply once at startup (handles both defer and non-defer loads)
   try{
     if (document.readyState !== 'loading') { App.applyI18nTitles(); }
     else { document.addEventListener('DOMContentLoaded', function(){ App.applyI18nTitles(); }, { once: true }); }
   }catch(_){}
 
-  // Re-apply on language changes
   window.addEventListener('storage', function(){ App.applyI18nTitles(); });
   document.addEventListener('lexitron:ui-lang-changed', function(){ App.applyI18nTitles(); });
 
@@ -110,8 +94,7 @@ App.clamp = (n,min,max)=>Math.max(min,Math.min(max,n));
 ;
 
   function loadState(){ try{ const raw=localStorage.getItem(LS_STATE); if(raw) return JSON.parse(raw);}catch(e){} return null; }
-  
-/* === Non-blocking saveState (debounced, idle if possible) === */
+
 App._saveStateNow = function(){
   try{
     localStorage.setItem(LS_STATE, JSON.stringify(App.state));
@@ -154,7 +137,6 @@ App.saveState = function(){
   }catch(_){}
 };
 
-/* Flush on page hide/unload */
 (function(){
   var flush = function(){
     try{
@@ -178,7 +160,6 @@ App.saveState = function(){
   function loadDictRegistrySafe(){ try{ const raw=localStorage.getItem(LS_DICTS); if(raw) return JSON.parse(raw);}catch(e){} return { activeKey:null, user:{}, lastByLang:{} }; }
   App.saveDictRegistry = function(){ try{ localStorage.setItem(LS_DICTS, JSON.stringify(App.dictRegistry)); }catch(e){} };
 
-  // DOM map
   App.DOM = {
     titleEl:document.getElementById('title'),
     appVerEl:document.getElementById('appVer'),
@@ -190,13 +171,11 @@ App.saveState = function(){
     starsEl:document.getElementById('stars'),
     statsBar:document.getElementById('statsBar'),
     copyYearEl:document.getElementById('copyYear'),
-    // header controls
     themeToggleBtn:document.getElementById('themeToggleBtn'),
     langToggleBtn:document.getElementById('langToggleBtn'),
     dictsBtn:document.getElementById('dictsBtn'),
     modalTitleEl:document.getElementById('modalTitle'),
     langFlags:document.getElementById('langFlags'),
-    // modal
     modal:document.getElementById('modal'),
     backdrop:document.getElementById('backdrop'),
     okBtn:document.getElementById('okBtn'),
@@ -205,14 +184,10 @@ App.saveState = function(){
   if (App.DOM.copyYearEl) App.DOM.copyYearEl.textContent = new Date().getFullYear();
 
   App.bootstrap = function(){
-    // set version label
     if (App.DOM.appVerEl) App.DOM.appVerEl.textContent = 'v' + App.APP_VER;
   };
 })();
-// конец!
 
-
-/* === Favorites v2 (per-dictionary) migration === */
 App.migrateFavoritesToV2 = function(){
   try{
     const st = App.state || (App.state = {});
@@ -280,12 +255,10 @@ App.clearFavoritesAll = function(){
   }catch(e){}
 };
 
-// MIGRATION: import progress from 'working-sets' keys (one-time)
 (function migrateFromWorkingSets(){
   if (window.__ws_migrated__) return;
   window.__ws_migrated__ = true;
   try{
-    // 1) Active sets by deck
     const legacySetsRaw = localStorage.getItem('app.setByDeck');
     if (legacySetsRaw){
       try{
@@ -301,7 +274,6 @@ App.clearFavoritesAll = function(){
       localStorage.removeItem('app.setByDeck');
     }
 
-    // 2) Stars (rare): app.starsByDeck -> flatten into App.state.stars
     const legacyStarsRaw = localStorage.getItem('app.starsByDeck');
     if (legacyStarsRaw){
       try{
@@ -322,7 +294,6 @@ App.clearFavoritesAll = function(){
       localStorage.removeItem('app.starsByDeck');
     }
 
-    // 3) Mistakes: __mistakes_<deckKey> -> totals.errors
     const keys = Object.keys(localStorage);
     let added = 0;
     keys.forEach(k=>{
@@ -342,7 +313,6 @@ App.clearFavoritesAll = function(){
     }
   }catch(_){}
 })();
-
 
   /**
    * Reset deck progress (stars/successes/lastSeen) for a given dictionary key.
@@ -367,10 +337,7 @@ App.clearFavoritesAll = function(){
       App.saveState && App.saveState();
     }catch(_){}
   };
-/* -------------------------------  К О Н Е Ц  ------------------------------- */
 
-
-/*! App.Config — merged */
 (function(){
   window.App = window.App || {};
   App.Config = App.Config || {
@@ -384,8 +351,6 @@ App.clearFavoritesAll = function(){
   };
 })();
 
-
-/* i18n titles at startup */
 try{
   if (document.readyState !== 'loading') App.applyI18nTitles();
   else document.addEventListener('DOMContentLoaded', function(){ try{ App.applyI18nTitles(); }catch(_){

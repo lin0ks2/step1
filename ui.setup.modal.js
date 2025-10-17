@@ -1,8 +1,3 @@
-/*
-***************************************************************************
- Version: 1.5 • Updated: 2025-10-10 • File: release-main/ui.setup.modal.js 
-***************************************************************************
-*/
 (function(){
   const LS = {
     uiLang: 'lexitron.uiLang',
@@ -49,7 +44,6 @@
   }
 
   function build(){
-    // Ensure LS.uiLang is set to the effective language so flags, labels, and fallback match
     const eff = effectiveLang();
     if (!get(LS.uiLang)) set(LS.uiLang, eff);
     if (window.App && App.settings) {
@@ -100,7 +94,6 @@
       </div>`;
     document.body.appendChild(m);
 
-    // Theme sync if not set yet
     try{
       const body=document.body;
       if (!body.getAttribute('data-theme')){
@@ -115,19 +108,16 @@
     const okBtn = m.querySelector('#setupConfirm');
 
     const modeEl = m.querySelector('#setupModeToggle');
-    // Initialize from current App mode (checked = hard)
     try{
       const isHard = (window.App && App.getMode && App.getMode()==='hard');
       if (modeEl){
         modeEl.checked = !!isHard;
         modeEl.setAttribute('aria-checked', String(!!isHard));
         modeEl.addEventListener('change', function(){
-          // No confirmation in setup; just reflect UI state
           modeEl.setAttribute('aria-checked', String(!!modeEl.checked));
         }, {passive:true});
       }
     }catch(_){}
-
 
     function activeUi(){ return (uiFlagsEl.querySelector('.flagBtn.active')?.dataset.code)||eff; }
     function activeStudy(){ return (studyFlagsEl.querySelector('.flagBtn.active')?.dataset.code)||null; }
@@ -138,7 +128,6 @@
       m.querySelectorAll('.field .label')[0].textContent = (I18N[code]?.uiLanguage)||lab.uiLanguage;
       m.querySelectorAll('.field .label')[1].textContent = (I18N[code]?.studyLanguage)||lab.studyLanguage;
       okBtn.textContent = (I18N[code]?.ok || I18N[code]?.confirm || lab.ok);
-      // Update mode toggle labels too
       try{
         const normalSpan = m.querySelector('#setupModeToggleWrap [data-i18n="modeNormal"]');
         const hardSpan = m.querySelector('#setupModeToggleWrap [data-i18n="modeHard"]');
@@ -220,12 +209,10 @@
     renderStudyFlags();
     okBtn.disabled = !get(LS.deckKey);
 
-    // open modal
     m.classList.remove('hidden');
 
     okBtn.addEventListener('click', ()=>{
-      
-      // Persist chosen mode from setup toggle (no confirmation)
+
       try{
         const modeEl = m.querySelector('#setupModeToggle');
         const chosenMode = (modeEl && modeEl.checked) ? 'hard' : 'normal';
@@ -259,7 +246,6 @@ const ui = activeUi() || effectiveLang();
       try{ document.body && document.body.removeAttribute('data-theme'); }catch(_){}
       if (window.App && App.applyTheme) App.applyTheme();
 
-      // notify
       try{ document.dispatchEvent(new CustomEvent('i18n:lang-changed', { detail:{ lang: ui } })); }catch(_){}
       document.dispatchEvent(new CustomEvent('lexitron:setup:done', { detail:{ uiLang:ui, studyLang:st, deckKey:dk } }));
     });
@@ -291,7 +277,6 @@ const ui = activeUi() || effectiveLang();
   window.SetupModal = { build, shouldShow, LS };
 })();
 
-/* ---- MERGED FROM: info.modal.patch.js ---- */
 /*!
  * info.modal.patch.js — Modal "Инструкция" unified header/footer
  * Version: 1.6.2
@@ -340,7 +325,6 @@ const ui = activeUi() || effectiveLang();
   else fillFromI18n();
 })();
 
-/* ---- MERGED FROM: settings.modal.patch.js ---- */
 /*!
  * settings.modal.patch.js — Placeholder modal "Настройки"
  * Version: 1.6.2

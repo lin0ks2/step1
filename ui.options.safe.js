@@ -1,8 +1,3 @@
-/*
-****************************************************************************
- Version: 1.5 • Updated: 2025-10-10 • File: release-main/ui.options.safe.js 
-****************************************************************************
-*/
 (function(){
   var App = window.App || (window.App = {});
 
@@ -34,11 +29,9 @@
     var options = [];
     var used = new Set();
 
-    // 1) correct option
     var correctText = labelOf(word) || String(word.word||'').trim();
     uniqPush(options, { id:String(word.id), text: correctText, isCorrect:true }, used);
 
-    // 2) pool from mistakes (full cards)
     var pool = mistakesDeck().slice();
     for (var i = pool.length - 1; i >= 0; i--){
       if (String(pool[i].id) === String(word.id)) pool.splice(i,1);
@@ -49,7 +42,6 @@
       uniqPush(options, { id:String(pool[i].id), text:txt, isCorrect:false }, used);
     }
 
-    // 3) top-up from same source deck
     var dk = word._mistakeSourceKey || activeKey();
     var full = resolveDeck(dk);
     for (var j=0; j<full.length && options.length<4; j++){
@@ -58,7 +50,6 @@
       uniqPush(options, { id:String(w.id), text:txt2, isCorrect:false }, used);
     }
 
-    // 4) shuffle
     for (var k = options.length - 1; k > 0; k--){
       var m = Math.floor(Math.random()*(k+1));
       var tmp = options[k]; options[k]=options[m]; options[m]=tmp;
@@ -96,7 +87,6 @@
       pushOpt({ id:String(word.id), text:correctText, isCorrect:true });
     }
 
-    // top-up to 4 from active deck
     var deck = resolveDeck(activeKey());
     for (var j=0; j<deck.length && out.length<4; j++){
       var w = deck[j]; if (String(w.id) === String(word.id)) continue;
@@ -108,7 +98,6 @@
       out.push({ id:'__stub_'+out.length, text: correctText, isCorrect: (out.length===0) });
     }
 
-    // shuffle (keep at least one correct)
     var corrIdx = out.findIndex(function(o){ return o.isCorrect; });
     for (var k = out.length - 1; k > 0; k--){
       var m = Math.floor(Math.random()*(k+1));
@@ -146,7 +135,6 @@
     if (where){
       where.obj[where.key] = wrapper;
     } else {
-      // fallback: wrap renderOptions if builder unknown
       var origRender = null;
       if (typeof window.renderOptions === 'function'){
         origRender = window.renderOptions;
@@ -164,4 +152,3 @@
     try { install(); } catch(e){}
   }
 })();
-/* -------------------------------  К О Н Е Ц  ------------------------------- */

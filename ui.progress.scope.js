@@ -1,16 +1,9 @@
-/*
-******************************************************************************
- Version: 1.5 • Updated: 2025-10-10 • File: release-main/ui.progress.scope.js 
-******************************************************************************
-*/
 (function(){
   if (!window.App) window.App = {};
   var App = window.App;
 
   var LS_KEY = 'progress.v2'; // structure: { stars:{dictKey:{setIndex:{id:value}}}, successes:{...}, lastSeen:{...} }
 
-  // ---- storage helpers ----
-  
   function earlyDeckKey(){
     try{
       var k = (App.dictRegistry && App.dictRegistry.activeKey) || null;
@@ -34,7 +27,6 @@ function load(){
     try{ localStorage.setItem(LS_KEY, JSON.stringify(st)); }catch(e){}
   }
 
-  // current scope = { dictKey, setIndex }
   function scope(){
     var key = earlyDeckKey();
     var setIndex = 0;
@@ -64,7 +56,6 @@ function load(){
     bucket[String(prop)] = value;
   }
 
-  // ---- one-time in-memory migration (handles early writes before this file loads) ----
   try {
     var earlyKey = earlyDeckKey();
     var earlySet = 0;
@@ -78,7 +69,6 @@ function load(){
     var bucketSucc  = ensure2(stEarly['successes']||{}, String(earlyKey), String(earlySet));
     var bucketSeen  = ensure2(stEarly['lastSeen']||{}, String(earlyKey), String(earlySet));
 
-    // If App.state.* are plain objects with data (not proxies), persist them into progress.v2
     if (App.state && App.state.stars && !App.state.stars.__isProxy && typeof App.state.stars === 'object') {
       var has = false;
       for (var k in App.state.stars){ if (Object.prototype.hasOwnProperty.call(App.state.stars,k)) { has = true; break; } }
@@ -99,12 +89,9 @@ function load(){
       });
     }
 
-    // Save back if anything changed
     try { save({ stars: stEarly.stars || stEarly['stars'], successes: stEarly.successes || stEarly['successes'], lastSeen: stEarly.lastSeen || stEarly['lastSeen'] }); } catch(_){}
   } catch(_){}
 
-  
-  // ---- migrate early 'default' bucket to actual deck key if present ----
   try{
     var st0 = load();
     var dk = earlyDeckKey();
@@ -128,7 +115,6 @@ function load(){
       save(st0);
     }
   }catch(_){}
-// ---- proxies (scoped) ----
   function makeProxy(field){
     var st = load();
     var shadow = Object.create(null);
@@ -177,7 +163,6 @@ function load(){
     });
   }
 
-  // idempotent init
   App.state = App.state || {};
   if (!App.state.stars     || !App.state.stars.__isProxy)     App.state.stars     = makeProxy('stars');
   if (!App.state.successes || !App.state.successes.__isProxy) App.state.successes = makeProxy('successes');
@@ -186,7 +171,6 @@ function load(){
   App.state.successes.__isProxy = true;
   App.state.lastSeen.__isProxy = true;
 
-  // ---- GLOBAL AGGREGATOR (progress.v2 + legacy k_state_v1_3_x) ----
   App.Progress = App.Progress || {};
   App.Progress.aggregateStars = function(dictKey){
     try{
@@ -194,14 +178,12 @@ function load(){
       var agg = Object.create(null);
       var sMax = (App.Trainer && App.Trainer.starsMax && App.Trainer.starsMax()) || 5;
 
-      // restrict to active dictionary ids
       var deck = (App.Decks && App.Decks.resolveDeckByKey) ? (App.Decks.resolveDeckByKey(key) || []) : [];
       var allow = null;
       if (deck && deck.length){
         allow = new Set(deck.map(function(w){ return String(w.id); }));
       }
 
-      // from progress.v2
       try{
         var st = load();
         var byDict = st.stars && st.stars[key];
@@ -220,7 +202,6 @@ function load(){
         }
       }catch(_){}
 
-      // legacy k_state_v1_3_x (kept for safety in this branch)
       try{
         var raw = localStorage.getItem('k_state_v1_3_1') || localStorage.getItem('k_state_v1_3_0');
         if (raw){
@@ -245,8 +226,6 @@ function load(){
     }
   };
 
-
-  // ---- public deck reset (by dictionary key) ----
   window.App = window.App || {};
   App.ProgressV2 = App.ProgressV2 || {};
   App.ProgressV2.resetDeck = function(dictKey){
