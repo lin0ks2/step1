@@ -1,3 +1,8 @@
+/*
+******************************************************************************
+ Version: 1.5 • Updated: 2025-10-10 • File: release-main/app.spoiler.bootstrap.js 
+******************************************************************************
+*/
 (function(){
   function init(){
     if (window.App && App.renderSetsBar){

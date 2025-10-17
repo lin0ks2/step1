@@ -1,3 +1,8 @@
+/*
+**********************************************************************
+ Version: 1.5 • Updated: 2025-10-10 • File: release-main/app.decks.js 
+**********************************************************************
+*/
 (function(){
   var App = window.App || (window.App = {});
   App.Decks = App.Decks || {};
@@ -310,3 +315,4 @@
   loadLS();
   S._save = saveLS;
 })();
+

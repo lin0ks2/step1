@@ -1,3 +1,8 @@
+/*
+*************************************************************************
+ Version: 1.5 • Updated: 2025-10-10 • File: release-main/ui.lifecycle.js 
+*************************************************************************
+*/
 (function(){
   function afterAnswer(){
     try{
@@ -61,13 +66,14 @@
     try {
       if (window.StartupManager && typeof StartupManager.gate === 'function'){
         StartupManager.gate();
-      } else {
+      } else {(void 0);
       }
-    } catch(e){
+    } catch(e){(void 0);
     }
   });
 })();
 /* -------------------------------  К О Н Е Ц  ------------------------------- */
+
 
 /*!
  * startup.manager.js — Lexitron
@@ -88,6 +94,7 @@
   };
 
   const M = (window.StartupManager = {
+    log(...a){ try{(void 0); }catch(_){}},
     get(k, d){ try{ const v = localStorage.getItem(k); return v===null?d:v; }catch(_){ return d; } },
     set(k, v){ try{ localStorage.setItem(k, v); }catch(_){ } },
 
@@ -120,6 +127,7 @@
       try { return key && window.decks && Array.isArray(window.decks[key]); } catch(_){ return false; }
     },
 
+    
     deckNonEmpty(key){
       try{
         if (!key) return false;
@@ -205,7 +213,7 @@
     },
 
     boot(state){
-      if (!state.deckKey){
+      if (!state.deckKey){(void 0); 
         alert('Нет доступных словарей для старта.');
         return;
       }
@@ -213,8 +221,9 @@
         if (window.App && typeof App.bootstrap === 'function'){
           App.bootstrap();
           M.log('boot ok with deck', state.deckKey);
-        } else {
+        } else {(void 0);
         }
+      }catch(e){(void 0); }
     },
 
     gate(){
@@ -243,3 +252,4 @@
   });
 })();
 /* -------------------------------  К О Н Е Ц  ------------------------------- */
+

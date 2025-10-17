@@ -1,3 +1,8 @@
+/*
+******************************************************************
+ Version: 1.5 • Updated: 2025-10-10 • File: release-main/dicts.js 
+******************************************************************
+*/
 (function(){
   'use strict';
 
@@ -26,6 +31,8 @@
 
     // Флекс-раскладка (на случай отсутствия CSS)
     header.classList.add('flex-between');
+    
+    
 
     // 2) Заголовок #modalTitle
     let title = dialog.querySelector('#modalTitle');

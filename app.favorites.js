@@ -1,3 +1,8 @@
+/*
+**************************************************************************
+ Version: 1.5 • Updated: 2025-10-10 • File: release-main/app.favorites.js 
+**************************************************************************
+*/
 (function(){
   var App = window.App || (window.App = {});
   var PROG_KEY = 'favorites.progress.v1';

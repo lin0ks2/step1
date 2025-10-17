@@ -1,3 +1,8 @@
+/*
+******************************************************************************
+ Version: 1.5 • Updated: 2025-10-10 • File: release-main/ui.progress.scope.js 
+******************************************************************************
+*/
 (function(){
   if (!window.App) window.App = {};
   var App = window.App;
@@ -5,7 +10,7 @@
   var LS_KEY = 'progress.v2'; // structure: { stars:{dictKey:{setIndex:{id:value}}}, successes:{...}, lastSeen:{...} }
 
   // ---- storage helpers ----
-
+  
   function earlyDeckKey(){
     try{
       var k = (App.dictRegistry && App.dictRegistry.activeKey) || null;
@@ -98,6 +103,7 @@ function load(){
     try { save({ stars: stEarly.stars || stEarly['stars'], successes: stEarly.successes || stEarly['successes'], lastSeen: stEarly.lastSeen || stEarly['lastSeen'] }); } catch(_){}
   } catch(_){}
 
+  
   // ---- migrate early 'default' bucket to actual deck key if present ----
   try{
     var st0 = load();
@@ -238,6 +244,7 @@ function load(){
       return {};
     }
   };
+
 
   // ---- public deck reset (by dictionary key) ----
   window.App = window.App || {};

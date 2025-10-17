@@ -1,3 +1,8 @@
+/*
+***************************************************************************
+ Version: 1.5 • Updated: 2025-10-10 • File: release-main/ui.setup.modal.js 
+***************************************************************************
+*/
 (function(){
   const LS = {
     uiLang: 'lexitron.uiLang',
@@ -123,6 +128,7 @@
       }
     }catch(_){}
 
+
     function activeUi(){ return (uiFlagsEl.querySelector('.flagBtn.active')?.dataset.code)||eff; }
     function activeStudy(){ return (studyFlagsEl.querySelector('.flagBtn.active')?.dataset.code)||null; }
 
@@ -218,7 +224,7 @@
     m.classList.remove('hidden');
 
     okBtn.addEventListener('click', ()=>{
-
+      
       // Persist chosen mode from setup toggle (no confirmation)
       try{
         const modeEl = m.querySelector('#setupModeToggle');

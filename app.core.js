@@ -1,3 +1,8 @@
+/*
+*********************************************************************
+ Version: 1.5 • Updated: 2025-10-10 • File: release-main/app.core.js 
+*********************************************************************
+*/
 (function(){
   const App = window.App = (window.App||{});
   App.APP_VER = '1.6.0';
@@ -41,6 +46,7 @@ App.starKey = function(wid, dk){
     }
   })();
 
+  
   App.i18n = function(lang){
     // Return language pack by code; fallback to I18N_FALLBACK.uk
     try{
@@ -51,7 +57,7 @@ App.starKey = function(wid, dk){
   };
 
   // Apply localized tooltips from App.i18n() for elements with [data-title-key]
-
+  
 App.applyI18nTitles = function(root){
   try{
     var lang = (App && App.settings && (App.settings.uiLang || App.settings.lang)) ||
@@ -104,7 +110,7 @@ App.clamp = (n,min,max)=>Math.max(min,Math.min(max,n));
 ;
 
   function loadState(){ try{ const raw=localStorage.getItem(LS_STATE); if(raw) return JSON.parse(raw);}catch(e){} return null; }
-
+  
 /* === Non-blocking saveState (debounced, idle if possible) === */
 App._saveStateNow = function(){
   try{
@@ -205,6 +211,7 @@ App.saveState = function(){
 })();
 // конец!
 
+
 /* === Favorites v2 (per-dictionary) migration === */
 App.migrateFavoritesToV2 = function(){
   try{
@@ -244,7 +251,7 @@ App.migrateFavoritesToV2 = function(){
     st.favorites_v2 = v2;
     st.favorites_legacy = old;
     try { App.saveState && App.saveState(); } catch(e){}
-    /* log removed */}catch(e){ console.warn('Favorites v2 migration failed:', e); }
+    /* log removed */}catch(e){(void 0); }
 };
 
 App.isFavorite = function(dictKey, wordId){
@@ -336,6 +343,7 @@ App.clearFavoritesAll = function(){
   }catch(_){}
 })();
 
+
   /**
    * Reset deck progress (stars/successes/lastSeen) for a given dictionary key.
    * Safe: does not touch sets-completion or favorites/mistakes storages.
@@ -361,6 +369,7 @@ App.clearFavoritesAll = function(){
   };
 /* -------------------------------  К О Н Е Ц  ------------------------------- */
 
+
 /*! App.Config — merged */
 (function(){
   window.App = window.App || {};
@@ -374,6 +383,7 @@ App.clearFavoritesAll = function(){
     trainerStrategy: "medium+penalties"
   };
 })();
+
 
 /* i18n titles at startup */
 try{

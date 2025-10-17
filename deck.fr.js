@@ -59,6 +59,7 @@ window.decks.fr_verbs = [
   { id: 57, word: "apporter", uk: "приносити", ru: "приносить" },
   { id: 58, word: "atteindre", uk: "досягати", ru: "достигать" },
 
+  
   { id: 61, word: "changer", uk: "міняти", ru: "менять" },
 
   { id: 63, word: "construire", uk: "будувати", ru: "строить" },
@@ -73,18 +74,24 @@ window.decks.fr_verbs = [
   { id: 75, word: "payer", uk: "платити", ru: "платить" },
 
   { id: 79, word: "raconter", uk: "розповідати", ru: "рассказывать" },
-
+ 
+ 
   { id: 84, word: "retourner", uk: "повертати(ся)", ru: "возвращать(ся)" },
+ 
+
 
   { id: 88, word: "suivre", uk: "слідувати", ru: "следовать" },
 
+
+ 
   { id: 92, word: "tomber", uk: "падати", ru: "падать" },
   { id: 93, word: "tourner", uk: "повертати/ставати", ru: "поворачивать/становиться" },
-
+ 
   { id: 95, word: "utiliser", uk: "використовувати", ru: "использовать" },
 
-  { id: 101, word: "adapter", uk: "адаптуватися", ru: "адаптироваться" },
 
+  { id: 101, word: "adapter", uk: "адаптуватися", ru: "адаптироваться" },
+ 
   { id: 113, word: "clarifier", uk: "уточнювати", ru: "уточнять" },
   { id: 114, word: "coordonner", uk: "координувати", ru: "координировать" },
   { id: 115, word: "déployer", uk: "розгортати/впроваджувати", ru: "развёртывать/внедрять" },
@@ -93,15 +100,20 @@ window.decks.fr_verbs = [
 
   { id: 126, word: "garantir", uk: "гарантувати", ru: "гарантировать" },
 
+
   { id: 129, word: "négocier", uk: "вести переговори", ru: "вести переговоры" },
 
   { id: 131, word: "obtenir", uk: "отримувати", ru: "получать" },
   { id: 132, word: "opérer", uk: "працювати/керувати", ru: "работать/управлять" },
   { id: 133, word: "organiser", uk: "організовувати", ru: "организовывать" },
 
+ 
+ 
   { id: 142, word: "sécuriser", uk: "захищати", ru: "защищать" },
 
+
   { id: 145, word: "surveiller", uk: "моніторити/слідкувати", ru: "мониторить/следить" },
+
 
   { id: 149, word: "valider", uk: "валідовати/підтверджувати", ru: "валидировать/подтверждать" }
 ];
@@ -137,6 +149,7 @@ window.decks.fr_nouns = [
   { id: 28, word: "chaise", uk: "стілець", ru: "стул" },
   { id: 29, word: "fenêtre", uk: "вікно", ru: "окно" },
   { id: 30, word: "porte", uk: "двері", ru: "дверь" },
+ 
 
   { id: 34, word: "rue", uk: "вулиця", ru: "улица" },
   { id: 35, word: "route", uk: "дорога", ru: "дорога" },
@@ -593,3 +606,4 @@ window.decks.fr_conjunctions = [
   { id: 16, word: "cependant", uk: "однак", ru: "однако" },
   { id: 17, word: "puisque", uk: "оскільки", ru: "поскольку" }
 ];
+

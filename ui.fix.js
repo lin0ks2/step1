@@ -1,3 +1,8 @@
+/*
+*******************************************************************
+ Version: 1.5 • Updated: 2025-10-10 • File: release-main/ui.fix.js 
+*******************************************************************
+*/
 (function(){
   const App = window.App||{};
   if (App.Sets && typeof App.Sets.setActiveSetIndex === 'function'){

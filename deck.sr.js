@@ -1266,3 +1266,4 @@ window.decks.sr_particles = [
   { id: 8, word: "evo", uk: "ось", ru: "вот (же)" },
   { id: 9, word: "eno", uk: "он там", ru: "вон там" }
 ];
+

@@ -1,3 +1,8 @@
+/*
+*********************************************************************
+ Version: 1.5 • Updated: 2025-10-10 • File: release-main/ui.state.js 
+*********************************************************************
+*/
 (function(){
   const A = ()=>window.App||{};
   function key(){ return (A().dictRegistry && A().dictRegistry.activeKey) || null; }

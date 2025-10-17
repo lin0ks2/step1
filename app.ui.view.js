@@ -1,3 +1,9 @@
+/*
+************************************************************************
+ Version: 1.5 • Updated: 2025-10-10 • File: release-main/app.ui.view.js 
+************************************************************************
+*/
+
 // --- Mode helpers (Normal vs Hard) ---
 (function(){
   const App = window.App || (window.App = {});
@@ -337,6 +343,8 @@ if (!w) return;
     }catch(_){}
   }
 
+
+
   function renderCard(force = false) {
     applyCardModeClass();
 
@@ -475,7 +483,7 @@ if (!w) return;
       }
       renderStars();
       renderSetStats(); updateStats();
-
+      
       setTimeout(nextWord, 500);
       return;
     }
@@ -590,6 +598,7 @@ if (!w) return;
       try{ if (typeof updateSpoilerHeader==='function') updateSpoilerHeader(); }catch(_){ } try{ if (typeof renderSetStats==='function') renderSetStats(); }catch(_){ }
       }
 
+  
   function _applyActiveKeyChange(key){
     try{
       if (!key) return;
@@ -634,6 +643,7 @@ function renderDictList() {
       } catch (e) {}
     })();
 
+    
     (function appendFavoritesRow(){
       try{
         const row = makeDictRow('fav');
@@ -661,6 +671,7 @@ function renderDictList() {
         }
       }catch(e){}
     })();
+
 
     (function(){
       const all = App.Decks.builtinKeys();
@@ -803,6 +814,7 @@ function renderDictList() {
         if (defKey) App.dictRegistry.activeKey = defKey;
         try{ localStorage.setItem('lexitron.deckKey', String(defKey)); localStorage.setItem('lexitron.activeKey', String(defKey)); }catch(_){}
 
+
         App.saveDictRegistry && App.saveDictRegistry();
         renderDictList(); App._renderSetsBarOriginal(); try{ if (typeof renderSetStats==='function') renderSetStats(); }catch(_){ }
       try{ if (typeof updateSpoilerHeader==='function') updateSpoilerHeader(); }catch(_){ } try{ if (typeof renderSetStats==='function') renderSetStats(); }catch(_){ }
@@ -816,7 +828,7 @@ function renderDictList() {
     row.appendChild(actions);
 
     row.addEventListener('click', () => {
-
+      
       try{ localStorage.setItem('lexitron.deckKey', String(key)); localStorage.setItem('lexitron.activeKey', String(key)); }catch(_){}
       try{ if (typeof updateSpoilerHeader==='function') updateSpoilerHeader(); }catch(_){ }
       try{ if (typeof renderSetStats==='function') renderSetStats(); }catch(_){ }
@@ -850,7 +862,7 @@ if (row.classList.contains('disabled')) return;
   }
 
   const FLAG_EMOJI = { ru:'🇷🇺', uk:'🇺🇦', en:'🇬🇧', de:'🇩🇪', es:'🇪🇸', fr:'🇫🇷', it:'🇮🇹', pl:'🇵🇱', sr:'🇷🇸', tr:'🇹🇷' };
-
+  
   // Preferred key for a language = the FIRST key from the currently used sorted order
   function pickPreferredKeyForLang(langCode) {
     try{
@@ -1018,7 +1030,7 @@ renderDictList();
         t.infoSteps.forEach(function(s){ const li=document.createElement('li'); li.textContent=String(s||''); ul.appendChild(li); });
         contentEl.appendChild(ul);
       }
-
+    
       // LEXI: ensure our settings captions/buttons are localized
       (function(){
         try{
@@ -1050,6 +1062,7 @@ renderDictList();
   else fillFromI18n();
 })();
 
+
 // Settings modal bootstrap (mirrors Info modal; safe & isolated)
 (function(){
   const btn   = document.getElementById('btnSettings');
@@ -1072,7 +1085,7 @@ renderDictList();
         if (normalEl && t.modeNormal) normalEl.textContent = String(t.modeNormal);
         const hardEl = contentEl.querySelector('[data-i18n="modeHard"]');
         if (hardEl && t.modeHard) hardEl.textContent = String(t.modeHard);
-
+    
         // Use the i18n text if present; fallback string otherwise
         const text = (t.settingsInDev!=null) ? String(t.settingsInDev) : '';
         (function(){
@@ -1196,6 +1209,7 @@ function close(){ modal.classList.add('hidden'); }
 
   W.HalfStars={render};
 
+
 /* ===== merged from lang-flag.fix.js ===== */
 /*!
  * lang-flag.fix.js — keeps header language flag in sync
@@ -1248,6 +1262,7 @@ function close(){ modal.classList.add('hidden'); }
 
 })();
 
+
 // Donate modal bootstrap (mirrors Settings modal)
 (function(){
   const btn   = document.getElementById('btnDonate');
@@ -1281,6 +1296,7 @@ function close(){ modal.classList.add('hidden'); }
   else fillFromI18n();
 })();
 
+
 // override unlock threshold to depend on mode
 (function(){
   try{
@@ -1290,6 +1306,9 @@ function close(){ modal.classList.add('hidden'); }
     App.Trainer.unlockThreshold = function(){ return App.getReverseThreshold(); }; /* unlock threshold override */
   }catch(_){}
 })();
+
+
+
 
 // --- Added for mode switch protection ---
 App.hasProgress = function(){
@@ -1321,6 +1340,7 @@ App.resetProgress = function(){
     try { localStorage.removeItem('lexitron.progress'); } catch(_){}
     // optionally re-render UI
     if (typeof App.renderStats === 'function') App.renderStats();
+  } catch(e){(void 0); }
 };
 // --- End added ---
 // Settings toggle wiring (Normal/Hard)
@@ -1340,7 +1360,7 @@ App.resetProgress = function(){
     if (!el) return;
     const newIsHard = !!el.checked;
     const currentIsHard = (App.getMode() === 'hard');
-
+    
     if (newIsHard !== currentIsHard) {
       // Ask confirmation and reset progress for CURRENT dictionary (all sets) to avoid mixed star-steps
       var dictKey = (App.dictRegistry && App.dictRegistry.activeKey) || null;
@@ -1365,7 +1385,7 @@ App.resetProgress = function(){
       } catch(_){}
       try { if (typeof renderStars === 'function') renderStars(); } catch(_){}
     }
-
+    
     const isHard = newIsHard;
     App.settings = App.settings || {};
     App.settings.mode = isHard ? 'hard' : 'normal';
@@ -1452,6 +1472,8 @@ if (document.readyState === 'loading') {
   };
 })();
 // === End Unified Confirm Modal API ===
+
+
 
 // --- injected wrapper: spoilers in main sets panel (keeps original logic) ---
 (function(){
@@ -1610,6 +1632,7 @@ if (document.readyState === 'loading') {
   }
 })(); // end injected wrapper
 
+
 // --- Hard-bind sets rendering to in-spoiler containers (no ID swapping) ---
 (function(){
   function updateSpoilerHeader(){
@@ -1711,6 +1734,7 @@ if (document.readyState === 'loading') {
 
 // applyFromUI removed, handled by App.init()
 
+
 /* === Info Modal: Информация (robust show + i18n + tabs) — 2025-10-14 === */
 (function(){
   try{
@@ -1756,7 +1780,7 @@ if (document.readyState === 'loading') {
           <div class="actionsRow">
             <button id="btnCheckUpdates" class="btnPill"></button>
           </div>
-
+          
           <div class="aboutSep"></div>
 <div class="regBlock">
             <label for="regKey" id="regKeyLabel"></label>
@@ -1878,6 +1902,7 @@ regStubHint:'Placeholder — activation logic will be added later.'}
       }
     }catch(_){}
 
+    
     // About content — render dynamic bits (version, license status) per current i18n/lang
     function renderAboutDynamic(){
       try{
@@ -1955,6 +1980,7 @@ regStubHint:'Placeholder — activation logic will be added later.'}
     // Expose opener if exists
     const infoBtn = document.getElementById('btnInfo');
     if (infoBtn) infoBtn.addEventListener('click', ensureOnShow);
+  }catch(e){(void 0); }
 })();
 
 /* === [PATCH 2025-10-14] Info modal — i18n title fix, remove hint, add separator (safe) === */
@@ -2009,4 +2035,5 @@ regStubHint:'Placeholder — activation logic will be added later.'}
       var obs = new MutationObserver(run);
       obs.observe(modal, {attributes:true, attributeFilter:['class']});
     }catch(_){}
+  }catch(e){(void 0); }
 })();

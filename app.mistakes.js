@@ -1,3 +1,11 @@
+/*
+*************************************************************************
+ Version: 1.9 • Updated: 2025-10-13 • File: app.mistakes.js
+ Goal: Make "Мои ошибки" independent from UI language (like Favorites).
+       - Content persists/visible when UI language changes.
+       - Aggregates legacy UI-scoped data and writes to a neutral bucket.
+*************************************************************************
+*/
 (function(){
   const App = window.App || (window.App = {});
   const M = App.Mistakes || (App.Mistakes = {});
@@ -272,7 +280,7 @@
   // One-time light migration (non-destructive): merge current UI bucket into UI_ALL
   migrateCurrentToAll();
 
-})();
+})(); 
 /* -------------------------------  К О Н Е Ц  ------------------------------- */
 
 /* ---- Gate (threshold=1, prefer original UI hook, confirmed-add) ---- */
