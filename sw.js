@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v1.6.9v1.6.0;
+const CACHE_VERSION = 'v1.6.9';
 const CACHE_NAME='lexitron-1.6.9'+CACHE_VERSION;
 const CORE=[
   './','./index.html','./style.css','./site.webmanifest',
