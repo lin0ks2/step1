@@ -1,3 +1,8 @@
+/*
+***************************************************************
+ Version: 1.5 • Updated: 2025-10-10 • File: release-main/sw.js 
+***************************************************************
+*/
 const CACHE_VERSION = 'v1.6.0';
 const CACHE_NAME='lexitron-v1.6.0'+CACHE_VERSION;
 const CORE=[
@@ -53,8 +58,9 @@ self.addEventListener('fetch',e=>{
   })());
 });
 
+
 self.addEventListener('message', event => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
-});
+});;
