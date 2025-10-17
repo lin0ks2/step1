@@ -28,6 +28,7 @@
   hook('onIDontKnow', afterAnswer);
   hook('nextWord', afterAnswer);
 
+  // wrap set change
   try{
     if (window.App && App.Sets && typeof App.Sets.setActiveSetIndex === 'function'){
       var _set = App.Sets.setActiveSetIndex;
@@ -39,6 +40,17 @@
     }
   }catch(e){}
 })();
+/* -------------------------------  К О Н Е Ц  ------------------------------- */
+
+/* ---- MERGED FROM: app.addon.startup.js, startup.manager.js ---- */
+/*!
+ * app.addon.startup.js — Lexitron
+ * Version: 1.5.0
+ * Date: 2025-09-21
+ *
+ * Purpose:
+ *  - Part of the Lexitron web app
+ */
 
 (function(){
   function onReady(fn){
@@ -55,6 +67,16 @@
     }
   });
 })();
+/* -------------------------------  К О Н Е Ц  ------------------------------- */
+
+/*!
+ * startup.manager.js — Lexitron
+ * Version: 1.6.1
+ * Date: 2025-09-21
+ *
+ * Purpose:
+ *  - Part of the Lexitron web app
+ */
 
 (function(){
   const LS = {
@@ -88,6 +110,7 @@
     deckExists(key){
       try{
         if (!key) return false;
+        // virtual decks should be treated as existing
         if (key==='fav' || key==='favorites' || key==='mistakes') return true;
         if (window.App && App.Decks && typeof App.Decks.resolveDeckByKey==='function'){
           const arr = App.Decks.resolveDeckByKey(key);
@@ -153,6 +176,7 @@
 
     validateAndFix(initial){
       let { uiLang, studyLang, deckKey } = initial;
+      // Apply UI lang early
       try{ if (window.App && App.settings) App.settings.lang = uiLang; M.set(LS.uiLang, uiLang); }catch(_){}
 
       if (M.deckNonEmpty(deckKey)){
@@ -218,3 +242,4 @@
     }
   });
 })();
+/* -------------------------------  К О Н Е Ц  ------------------------------- */

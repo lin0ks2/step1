@@ -1,6 +1,6 @@
 <!--
 ********************************************************************
- Version: 1.5 • Updated: 2025-10-10 • File: release-main/index.html 
+ Version: 1.5 • Updated: 2025-10-10 • File: release-main/index.html
 ********************************************************************
 -->
 <!DOCTYPE html>
@@ -42,7 +42,7 @@
 <link rel="icon" type="image/png" sizes="128x128" href="./logo_128.png?v=1.6.0">
 <link rel="icon" type="image/png" sizes="32x32" href="./logo_32.png?v=1.6.0">
 <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png?v=1.6.0">
-<link rel="icon" href="./favicon.ico?v=1.6.0" type="image/x-icon"> 
+<link rel="icon" href="./favicon.ico?v=1.6.0" type="image/x-icon">
 <link rel="icon" sizes="512x512" href="./android-chrome-512x512.png?v=1.6.0">
 <link rel="manifest" href="./site.webmanifest?v=1.6.0">
 
@@ -67,6 +67,7 @@
   <meta name="twitter:image" content="./og-image.png?v=1.6.0">
 
 <style id="modal-inline-fix-1.6.3-1758932002">
+/* Critical inline for iOS cache issues — v1.6.5-1758932002 */
 .modal .modalHeader{display:flex!important;align-items:center!important;justify-content:space-between!important;padding:14px 14px!important;border-bottom:1px solid rgba(255,255,255,.08)!important}
 .modal .modalHeader .modalTitle{margin:0!important;font-size:20px!important;font-weight:700!important;line-height:1.2!important}
 .modal .iconBtn.small{width:32px!important;height:32px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;font-size:18px!important;border-radius:8px!important;background:transparent!important;border:1px solid rgba(255,255,255,.08)!important;opacity:.9!important}
@@ -74,7 +75,7 @@
 #modal .dictList{padding-bottom:14px!important}
 #modal .dictList > *:last-child{margin-bottom:8px!important}
 </style>
-  
+
 </head>
 <body>
 
@@ -122,7 +123,7 @@
         Всего слов: 0 / Изученно: 0 / Ошибок: 0
       </div>
     </section>
-  
+
     <div class="extraActions" aria-label="Extra actions">
       <button id="btnInfo" class="iconBtn" data-title-key="tt_help" aria-label="Инструкция">ℹ️</button>
       <button id="btnDonate" class="iconBtn" data-title-key="tt_support" aria-label="Поддержка">💰</button>
@@ -425,6 +426,7 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <script>
+// Live i18n runtime: call setUiLang('en'|'ru'|'uk') to switch instantly
 (function(){
   function normalizeLang(v){
     v = String(v||'').toLowerCase();
@@ -433,6 +435,7 @@ document.addEventListener('DOMContentLoaded', function(){
     return 'en';
   }
 
+  // storage sync across tabs
   window.addEventListener('storage', function(ev){
     if (ev.key === 'lexitron.uiLang' && ev.newValue){
       try {
@@ -447,17 +450,22 @@ document.addEventListener('DOMContentLoaded', function(){
     }
   });
 
+  // Expose simple API
   window.setUiLang = function(lang){
     try {
       lang = normalizeLang(lang);
+      // persist
       try { localStorage.setItem('lexitron.uiLang', lang); } catch(_){}
+      // update App.settings.lang if available
       if (window.App && App.settings) {
         try { App.settings.lang = lang; } catch(_){}
       }
+      // notify listeners (footer, headers, etc.)
       window.dispatchEvent(new CustomEvent('lexi:lang-changed', {detail:{lang: lang}}));
     } catch(e){ console.error(e); }
   };
 
+  // Optional: patch App.settings.lang to auto-dispatch when changed by other code
   try {
     if (window.App && App.settings && !Object.getOwnPropertyDescriptor(App.settings,'lang').set) {
       var _lang = (App.settings.lang || localStorage.getItem('lexitron.uiLang') || navigator.language || 'en');

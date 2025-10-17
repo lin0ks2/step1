@@ -1,3 +1,154 @@
+:root{ --radius-base:16px; --border-width:1px; }/*!
+ * style.css — Lexitron styles
+ * Version: 1.5.0
+ * Date: 2025-09-22
+ *
+ * Purpose:
+ *  - Core layout and theme variables
+ *  - Header, sets bar, card, options, modals, footer
+ *  - Responsive tweaks
+ *
+ * NOTE: Section dividers were inserted automatically at rule boundaries only.
+ *       No CSS declarations were modified.
+ */
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* Тема (переменные) */
+
+/* ============================== THEME VARIABLES / ROOT =============================== */
+:root{
+  --bg:#f6f7fb; --card:#fff; --text:#1f2430; --muted:#6b7280;
+  --green:#16a34a; --red:#dc2626; --border:#e5e7eb; --shadow:0 10px 30px rgba(16,24,40,.08);
+  --mint:#34d399; --mint-strong:#10b981; --mint-weak:#d1fae5;
+  --overlay:rgba(15,23,42,.6);
+  /* Инструментальные токены */
+  --tool-bg:#f5f7fb; --tool-border:#e2e8f0; --tool-fg:#0f172a;
+  --idk-fg:#0f172a; --idk-border:#cbd5e1; --idk-bg:transparent;
+  --focus-ring:#22c55e40;
+}/* Тёмная тема — у нас в проекте используется [data-theme="dark"] */
+[data-theme="dark"]{
+  --bg:#0b1020; --card:#0f172a; --text:#e5e7eb; --muted:#9ca3af;
+  --green:#22c55e; --red:#ef4444; --border:#1f2937; --shadow:0 10px 30px rgba(0,0,0,.4);
+  --mint:#34d399; --mint-strong:#10b981; --mint-weak:#0b3b2f;
+  --overlay:rgba(2,6,23,.7);
+  --tool-bg:#0f172a; --tool-border:#1f2937; --tool-fg:#e5e7eb;
+  --idk-fg:#e5e7eb; --idk-border:#334155; --idk-bg:transparent;
+  --focus-ring:#22c55e55;
+}/* База */
+*{box-sizing:border-box}html,body{height:100%}/* ============================== BODY / GLOBAL =============================== */
+body{
+  margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:var(--bg); color:var(--text);
+  display:flex; flex-direction:column;
+}/* Header */
+
+/* ============================== HEADER =============================== */
+header{
+  padding:10px 14px;
+  display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:nowrap;
+  background:var(--card); border-bottom:1px solid var(--idk-border);
+}header .brand{ display:flex; align-items:center; gap:8px; }.brand h1{font-size:26px;margin:0;font-weight:800}.brand .tagline{font-size:13px;color:var(--muted)}.ver{font-size:12px;color:var(--muted);margin-left:6px}.iconBtn{
+  width:44px;height:44px;padding:0;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;font-size:26px;line-height:1;
+  border:1px solid var(--tool-border);background:var(--tool-bg);color:var(--tool-fg);
+  cursor:pointer;transition:transform .12s ease, background .2s ease, border-color .2s ease, color .2s ease;
+}.iconBtn:hover{ filter:brightness(1.06); }.iconBtn:active{ transform:scale(0.95); }.iconBtn:focus-visible{ outline:none; box-shadow:0 0 0 2px var(--focus-ring); }/* Лого */
+header .logo-mark{
+  width:46px;height:46px;border-radius:6px;background:var(--card);border:1px solid var(--border);
+  padding:2px;object-fit:contain;pointer-events:none;
+}header .title-wrap{ display:flex; flex-direction:column; line-height:1.1; }header .title-wrap h1{ margin:0; }header .title-wrap .tagline{ margin-top:2px; }header .controls{ position:relative; z-index:1; display:flex; gap:10px; align-items:center; }/* Main Card */
+main{flex:1;display:grid;place-items:center;padding:12px}/* ============================== CARD / TRAINER CORE =============================== */
+.card{
+  width: 640px; max-width: 94vw;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:24px;
+  box-shadow:var(--shadow);
+  text-align:center;
+}.topRow{
+  display:flex; align-items:center; justify-content:space-between;
+  min-height:40px; margin-bottom:4px;
+}.stars{display:flex; gap:6px; align-items:center}.starIcon{font-size:24px;color:#cbd5e1}.starIcon.filled{color:#fbbf24}.heart{
+  font-size:24px; background:none; border:none; cursor:pointer;
+  transition:transform .2s ease; color:inherit; line-height:1;
+  width:24px; height:24px; display:flex; align-items:center; justify-content:center;
+}
+
+:root[data-theme="light"] .heart {
+  color: var(--muted);
+}.heart:active{transform:scale(0.9)}/* ============================== WORD BLOCK =============================== */
+
+.word{font-size:36px; font-weight:800; margin:6px 0 2px; line-height:1.15}.hint{color:var(--muted); margin-bottom:12px; font-size:14px}/* Sets bar — компактный, чувствительный к теме */
+
+/* ============================== SETS BAR =============================== */
+#setsBar{ display:flex; flex-wrap:wrap; justify-content:flex-start; gap:2px; padding:4px 0 2px; margin:4px 0 4px;
+  padding-left:6px;
+  padding-right:6px;}#setsBar .setTile:hover{ transform: translateY(-1px); }#setsBar .setTile:active{ transform:scale(0.97); }#setsBar .setTile.done{
+  background: rgba(34,197,94,.18);
+  border-color: rgba(34,197,94,.7);
+  color: inherit;
+}@media (max-width:360px){
+  #setsBar .setTile{ min-width:32px; height:32px; padding:0 8px; border-radius:12px; border:1px solid var(--border); background:var(--card); color:var(--muted); font-weight:600; font-size:13px; user-select:none; cursor:pointer; transition:transform .12s ease, background .12s ease, border-color .12s ease, color .12s ease; }
+}/* Мотивация — между наборами и звёздами */
+
+/* Варианты и кнопки */
+
+/* ============================== OPTIONS / ANSWERS =============================== */
+.options{
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:12px; justify-items:stretch; margin:14px 0 12px;
+}@media (max-width:420px){ .options{ grid-template-columns:1fr; } }button{
+  padding:0 14px; border-radius:14px; font-size:17px; cursor:pointer;
+  transition:background .2s, transform .06s ease, filter .2s;
+}/* ============================== OPTION BUTTON =============================== */
+.optionBtn{
+  height:52px; border:none; color:#073b3a; background:var(--mint); font-weight:600; outline:none;
+}.optionBtn:focus{ outline:none; box-shadow:none; }.optionBtn:active{ transform:scale(0.98); }.optionBtn.correct{ background:var(--green); color:#fff; }.optionBtn.wrong{ background:var(--red); color:#fff; }/* "Не знаю" — по центру и без мигания фокуса */
+.idkWrapper{ grid-column:1 / -1; display:flex; justify-content:center; margin-top:6px; }button.ghost{
+  background:var(--idk-bg); border:1px solid var(--border); color:var(--idk-fg);
+  margin-top:6px; height:42px; padding:0 16px;
+  border-radius:12px; font-size:15px; font-weight:600;
+  display:flex; align-items:center; justify-content:center; box-shadow:none; will-change: transform, filter;
+}button.ghost:hover{ filter:brightness(1.06); }button.ghost:focus, button.ghost:focus-visible{ outline:none; box-shadow:0 0 0 3px var(--focus-ring); }[data-theme="dark"] button.ghost{ background:#111827; color:var(--text); border:1px solid #374151; box-shadow:none; }/* Статистика */
+
+/* ============================== BOTTOM STATS =============================== */
+.statsBar{
+  margin-top:8px; font-size:12px; color:var(--muted);
+  border:1px solid var(--border); border-radius:12px; padding:6px 10px;
+  display:inline-block; background:var(--card);
+}/* Модалка словарей */
+.modal.hidden{display:none}/* ============================== MODAL · GENERIC =============================== */
+.modal{position:fixed; inset:0; display:grid; place-items:center; z-index:50; background: var(--overlay);}/* ============================== MODAL · BACKDROP =============================== */
+.backdrop{position:absolute; inset:0; background:var(--overlay)}/* ============================== MODAL · DIALOG FRAME =============================== */
+.dialog{
+  position:relative; z-index:10; background:var(--card); border:1px solid var(--border); border-radius:14px;
+  padding:14px; box-shadow:var(--shadow);
+  width:min(860px,94vw); max-height:90vh; overflow:auto;
+}.dialog h2{ text-align:center; margin:0 0 8px; font-size:26px; }/* Сетка списка словарей с фиксированной зоной действий */
+
+/* ============================== DICT LIST =============================== */
+.dictList{ display:flex; flex-direction:column; gap:6px; margin-top:6px; max-height:200px; overflow-y:auto; }.dictRow{
+  display:grid; grid-template-columns:22px 1fr 110px;
+  align-items:center; gap:10px; padding:10px 10px;
+  border:1px solid var(--border); border-radius:12px; background:var(--card);
+}.dictRow.active{ border-color:var(--mint); background:var(--mint-weak); box-shadow:0 0 0 2px rgba(52,211,153,.12) inset; }.dictFlag{ font-size:16px; width:22px; text-align:center; }.dictName{
+  font-weight:600; font-size:15px;
+  overflow:visible; text-overflow:ellipsis; white-space:nowrap; text-align:left; cursor:pointer;
+}.dictActions{ display:flex; gap:6px; justify-content:flex-end; }.iconOnly{
+  width:30px; height:30px; border:1px solid var(--border); border-radius:12px; background:var(--card); cursor:pointer;
+  display:flex; align-items:center; justify-content:center; font-size:15px; transition: filter .2s ease, transform .08s ease;
+}.iconOnly:hover{ filter:brightness(1.06); }.iconOnly:active{ transform:scale(0.96); }/* Кнопка OK в модалке */
+.modalActions{ display:flex; justify-content:center; margin-top:10px; }.modalActions .primary{
+  padding:9px 20px; font-size:15px; border-radius:12px;
+  background:var(--mint); border:none; color:#073b3a;
+}.modalActions .primary:hover{ background:var(--mint-strong); color:#fff; }/* Footer */
+
+/* ============================== FOOTER =============================== */
+footer{
+  padding:10px 14px; color:var(--muted);
+  border-top:1px solid var(--border);
+  font-size:13px; text-align:center;
+}.copyright{ color:var(--muted); }/* Small screens */
 @media (max-width:600px){
   .brand h1{font-size:22px}
   .card{ padding:20px }
@@ -5,6 +156,7 @@
   .optionBtn{font-size:15px; height:50px}
 }/* конец! */
 
+/* Disabled state for 'Мои ошибки' row (<4 words) */
 .dictRow.disabled{
   opacity: .55;
   cursor: not-allowed;
@@ -34,12 +186,14 @@
   color:var(--text);
 }/* Верхняя статистика без белой рамки */
 
+/* ============================== SET STATS BAR =============================== */
 #setStats{ width:100%; text-align:center; color:var(--muted); background:transparent !important; border:none !important; box-shadow:none !important; margin-top:0px; margin-bottom:0; }/* Extra actions (info + donate) */
 .extraActions{
   margin: 14px auto 10px;
   display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap;
 }.extraActions .iconBtn{width:44px; height:44px; border-radius:12px;
   font-size:18px;}/* Simple modal using existing theme tokens */
+/* Flag before dictionary title */
 .dictActiveTitle .dictFlag{
   display:inline-block;
   margin-right:6px;
@@ -70,7 +224,11 @@ a#donate, .donate, .donate a, .donate-btn, .donate-btn a, .icon-donate,
   text-decoration: none !important;
   -webkit-text-decoration: none !important;
 }/* CLEAN FIX: remove underline from donate icon by id */
+/* Motivation line — single source of truth */
 
+/* ───────────────── Modal cleanup (single-pass) ─────────────── */
+
+/* Info modal */
 #infoModal.modal{ display:flex; align-items:center; justify-content:center; }#infoModal.hidden{ display:none; }#infoModal .modalFrame{
   width:min( 640px, 94vw); background:var(--card); color:var(--text);
   border-radius:16px; box-shadow: 0 10px 30px rgba(0,0,0,.15); border:1px solid var(--border);
@@ -102,9 +260,13 @@ a#donate, .donate, .donate a, .donate-btn, .donate-btn a, .icon-donate,
   bottom: 0;
   height: 1px;
   background: var(--border);}/* === Dicts modal bottom spacing: match Info modal === */
+/* Remove extra 14px from the dialog container and keep 20px on actions */
 #modal .dialog{ padding: 14px 14px 0 !important; }/* was 14px all around */
 #modal .modalActions{ padding: 14px 14px 14px !important; }/* keep total bottom = 20px */
 
+/* === Setup (first-run) modal — align with other modals === */
+
+/* 1) Center section titles and give consistent vertical rhythm */
 #setupModal .sectionTitle,
 #setupModal h3,
 .firstRunDialog .sectionTitle,
@@ -130,6 +292,7 @@ a#donate, .donate, .donate a, .donate-btn, .donate-btn a, .icon-donate,
 .firstRunDialog .modalFrame,
 .setupDialog .modalFrame{ overflow: hidden; }/* === Setup (first-run) modal: match visual language of other modals === */
 
+/* 1) Center section labels with consistent rhythm */
 #setupModal .field .label{
   text-align: center;
   margin-top: 14px;
@@ -232,6 +395,7 @@ a#donate, .donate, .donate a, .donate-btn, .donate-btn a, .icon-donate,
   align-items: center;
   justify-content: space-between;
   padding: 14px 14px;
+  /* unify divider look (like inline fix for #modal) */
   position: relative;
   border-bottom: none !important;
   position: relative;}#settingsModal .modalHeader::after{content: "";
@@ -348,7 +512,7 @@ a#donate, .donate, .donate a, .donate-btn, .donate-btn a, .icon-donate,
 }body.modal-open{ overflow: hidden; }/* --- Confirm modal visual parity with Info/Donate/Settings --- */
 .confirmModal .modalHeader{
   padding: 12px 16px !important;
-  
+
 }.confirmModal .modalTitle{
   margin: 0;
   font-weight: 700;
@@ -359,6 +523,7 @@ a#donate, .donate, .donate a, .donate-btn, .donate-btn a, .icon-donate,
   line-height: 1.35;
 }.confirmModal .btn.primary{min-width: 120px;}.confirmModal .btn{ padding: 10px 16px; }/* --- Confirm modal: dark theme adaptation + consistent dividers --- */
 .confirmModal .modalFrame{
+  /* inherit text color from theme; set fallback */
   color: var(--modal-fg, inherit);
   background: var(--modal-bg, #fff);
 }/* Light theme divider colors */
@@ -388,7 +553,7 @@ html[data-theme="dark"] .confirmModal #confirmText,
   background: var(--card) !important;
   color: var(--text) !important;
 }.confirmModal .modalHeader{
-  
+
 }/* --- Confirm modal: forced header divider like other modals --- */
 .confirmModal .modalHeader{ position: relative; }/* Confirm modal header: use inset divider only, no border-bottom */
 .confirmModal .modalHeader{ position: relative !important; border-bottom: none !important; }/* Confirm modal footer: inset divider like header */
@@ -474,6 +639,7 @@ html[data-theme="dark"] .confirmModal .modalHeader{ border-bottom: none !importa
   border-radius:16px;
   background-size: 18px 18px;
   background-repeat: no-repeat;
+  /* Bottom corners (BL, BR) */
 }.card.mode-normal::after{
   background-image:
     linear-gradient(45deg, var(--mode-normal) 16px, transparent 16px),
@@ -493,6 +659,7 @@ html[data-theme="dark"] .confirmModal .modalHeader{ border-bottom: none !importa
   border-radius:16px; /* match .card radius */
   background-size: 18px 18px;
   background-repeat: no-repeat;
+  /* Top corners only (TL, TR) */
 }.card.mode-normal::before{
   background-image:
     linear-gradient(135deg, var(--mode-normal) 16px, transparent 16px),
@@ -516,6 +683,7 @@ body:has(#setupModal:not(.hidden)) #setStats{
   margin:6px 0;
   overflow:hidden;
   background: transparent;
+  /* Match card width on all devices to prevent giant spoiler on landscape */
   width: 640px;
   max-width: 94vw;
   margin-left: auto;
@@ -534,12 +702,14 @@ body:has(#setupModal:not(.hidden)) #setStats{
 .setsSpoilerBody [data-role="dict-title"]{
   display:none !important;
 }/* Ensure spoiler toggles only by summary */
+/* ---- Spoiler summary visual (theme friendly) ---- */
 .dictSpoiler .flag{ margin-right:6px; }/* Only tiles inside body — hide any stray headers/badges the original renderer might prepend */
 .setsSpoilerBody > :not(button):not(.setTile):not(.tiles):not(.grid):not(.btn):not(.btns){
   display:none !important;
 }/* Light theme polish */
-:root.light 
+:root.light
 
+/* --- Spoiler-set controls unified layout --- */
 #setControls{
   display:flex;
   flex-direction:column;
@@ -586,9 +756,11 @@ html:has(#setupModal:not(.hidden)) main .card{ opacity:0; visibility:hidden; poi
   transition: transform .12s ease, background .12s ease, border-color .12s ease, color .12s ease;
   flex: 0 0 calc((100% - (var(--tiles-per-row) - 1) * var(--tile-gap)) / var(--tiles-per-row));
   aspect-ratio: 1 / 1;
+  /* keeps exact squares */
   display: flex;
   align-items: center;
   justify-content: center;
+  /* aspect-ratio controls height */
   border-radius: 12px;}#setsBar .setTile.active{border-width: 2px;
   border-color: var(--mint-strong);
   color: var(--text);}/* Спойлер никогда не обрезает содержимое */
@@ -685,8 +857,9 @@ html:has(#setupModal:not(.hidden)) main .card{ opacity:0; visibility:hidden; poi
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;}.dictSpoiler > summary::-webkit-details-marker{ display: none; }.dictSpoiler > summary::marker{content: "";}
 
+/* === Heart ↔ Stars strict unification === */
 .card .topRow .heart,
-.heart { 
+.heart {
   color: var(--icon-muted, #cbd5e1) !important;
   transition: color .25s ease, transform .2s ease;
 }
@@ -704,19 +877,24 @@ html:has(#setupModal:not(.hidden)) main .card{ opacity:0; visibility:hidden; poi
 :root[data-theme="dark"] .heart { color: var(--icon-muted, #9aa3af) !important; }
 :root[data-theme="dark"] .heart.is-fav { color: var(--icon-active, #facc15) !important; }
 
+/* === Tabs visibility fix (2025-10-14) === */
 .tabPanel.hidden { display: none; }
 .tabs { display:flex; gap:8px; padding:8px 12px 0; border-bottom:1px solid rgba(0,0,0,.1); }
 .tab { border:none; background:none; padding:8px 12px; cursor:pointer; border-bottom:2px solid transparent; }
 .tab.active { border-bottom-color: var(--accent, #888); font-weight:600; }
 
+/* === Patch: About tab visuals (remove top divider, center, separator) — 2025-10-14 === */
+/* Remove the top border under tabs */
 .tabs { border-bottom: none !important; }
 
+/* Center entire About content */
 #panel-about { text-align: center; }
 .aboutGrid { justify-items: start; }
 .aboutRow { grid-template-columns: auto auto; }
 .aboutLabel, .aboutValue { text-align: left; }
 .actionsRow { margin: 12px 0; display: flex; justify-content: center; }
 
+/* Separator between update button and registration key (same look as modal bottom line) */
 .aboutSep {
   margin: 8px 0 12px;
   height: 1px;
@@ -724,6 +902,7 @@ html:has(#setupModal:not(.hidden)) main .card{ opacity:0; visibility:hidden; poi
   border: 0;
 }
 
+/* === [PATCH 2025-10-14] Info modal scoped tweaks — safe === */
 #infoModal .aboutSep { margin: 8px 0 12px; height: 1px; background: var(--border); }
 #infoModal #panel-about:not(.hidden){ text-align: left;  display:flex !important; flex-direction:column !important; overflow-y:visible; }
 #infoModal .aboutGrid { justify-items: start; }
@@ -733,8 +912,9 @@ html:has(#setupModal:not(.hidden)) main .card{ opacity:0; visibility:hidden; poi
 #infoModal .regBlock { margin-top: 10px; display: grid; gap: 6px; }
 #infoModal .regRow { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 #infoModal .regRow input[type="text"] { width: 100%; max-width: 320px; padding: 8px 10px; border: 1px solid var(--tool-border); border-radius: 6px;  background: var(--tool-bg); color: var(--tool-fg); caret-color: var(--text);}
-#infoModal .tabs .tab, 
+#infoModal .tabs .tab,
 
+/* === [PATCH 2025-10-14] Info modal visuals: mint active tab + stacked rows (scoped) === */
 #infoModal .tabs .tab.active{ background: transparent !important; border:2px solid #10b981 !important; color: var(--text); }
 #infoModal .tabs .tab{ -webkit-appearance:none; appearance:none;  color: var(--text); background: var(--tool-bg); border:none; border-radius:12px; padding:6px 18px; }
 
@@ -768,7 +948,7 @@ html:has(#setupModal:not(.hidden)) main .card{ opacity:0; visibility:hidden; poi
   border: 1px solid var(--border);
   border-radius: 12px;
   font-size: 15px;
-  
+
   font-weight: 500;
   box-shadow: none;
  padding:8px 16px; }
@@ -787,6 +967,7 @@ html:has(#setupModal:not(.hidden)) main .card{ opacity:0; visibility:hidden; poi
 
 #infoModal .modalActions{ padding: 12px 16px 16px !important; }
 
+/* === FINAL OVERRIDES (scoped strictly to #infoModal) — do not move ↑ === */
 #infoModal .tabs{
   display:flex !important;
   justify-content:center !important;
@@ -816,23 +997,29 @@ html:has(#setupModal:not(.hidden)) main .card{ opacity:0; visibility:hidden; poi
 #infoModal #panel-about .actionsRow{       margin:12px 0 12px !important; }
 #infoModal #panel-about .aboutSep{   margin-top:auto !important;  margin:10px 0 !important; }
 
+/* === Layout distribution for "About" tab (fill space, balanced air) === */
 #infoModal #panel-about:not(.hidden){    display:flex !important; flex-direction:column !important; overflow-y:visible; }
 #infoModal #panel-about .aboutGrid{ flex:0 0 auto !important;    row-gap:6px !important; }
 #infoModal #panel-about .actionsRow{ flex:0 0 auto !important;       margin:12px 0 12px !important; }
 #infoModal #panel-about .aboutSep{ flex:0 0 auto !important;   margin-top:auto !important;  margin:10px 0 !important; }
 #infoModal #panel-about .regBlock{ flex:0 0 auto !important;     margin:10px 0 12px !important; }
 #infoModal #panel-about .regRow{     margin-top:6px !important; }
+/* keep modal body min-height so layout has room to distribute */
 #infoModal .modalBody{      min-height: 240px; }
 
+/* === Equal vertical spacing around action buttons in About tab === */
 #infoModal #panel-about .actionsRow{       margin:12px 0 12px !important; }
 #infoModal #panel-about .aboutSep{   margin-top:auto !important;  margin:10px 0 !important; }
 #infoModal #panel-about .regBlock{     margin:10px 0 12px !important; }
 #infoModal #panel-about .regRow{     margin-top:6px !important; }
 
+/* ===== Info modal compact spacing override (2025-10-15) ===== */
+/* Force higher specificity and priority to beat any earlier rules */
 #infoModal .actionsRow{ margin:4px 0 2px !important; display:flex !important; justify-content:center !important; }
 #infoModal .aboutSep{ margin:2px 0 4px !important; height:1px !important; background: var(--border) !important; }
 #infoModal .regBlock{ margin-top:2px !important; }
 
+/* ===== Utilities (layout helpers) ===== */
 .center{ text-align:center; }
 .flex-center{ display:flex; align-items:center; justify-content:center; }
 .flex-between{ display:flex; align-items:center; justify-content:space-between; }
@@ -842,7 +1029,9 @@ html:has(#setupModal:not(.hidden)) main .card{ opacity:0; visibility:hidden; poi
 .m-10{ margin:10px; }
 .cursor-pointer{ cursor:pointer; }
 
-.modalBody h3.backupTitle { 
+/* === LEXITRON SETTINGS — COSMETIC TWEAKS (scoped & specific) === */
+/* Make subtitles ("Выбор режима", "Резервное копирование") same as Info modal's secondary headings */
+.modalBody h3.backupTitle {
   font-size: 16px !important;
   font-weight: 600 !important;
   line-height: 1.25;
@@ -850,10 +1039,12 @@ html:has(#setupModal:not(.hidden)) main .card{ opacity:0; visibility:hidden; poi
   text-align: left;
 }
 
-.modalBody #modeToggleWrap + .sectionDivider { 
+/* Divider spacing: match "Заголовок ↔ разделитель" */
+.modalBody #modeToggleWrap + .sectionDivider {
   margin: 12px 0 10px;
 }
 
+/* Center export/import buttons only inside backup section */
 .modalBody #backupSection .btnRow {
   display: flex;
   justify-content: center;
@@ -861,6 +1052,7 @@ html:has(#setupModal:not(.hidden)) main .card{ opacity:0; visibility:hidden; poi
   margin-top: 8px;
 }
 
+/* === LEXITRON SETTINGS — COSMETIC (scoped, v1.6.7) === */
 .modalBody .settingsSubtitle{
   font-size:16px;
   font-weight:600;

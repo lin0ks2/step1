@@ -44,24 +44,28 @@
   function resolveDeckByKey(key){
     if (!key) return [];
 
+    // virtual: mistakes
     if (key === 'mistakes'){
       try {
         return (App.Mistakes && App.Mistakes.deck) ? (App.Mistakes.deck() || []) : [];
       } catch (e) { return []; }
     }
 
+    // virtual: favorites
     if (key === 'fav' || key === 'favorites'){
       try {
         return (App.Favorites && App.Favorites.deck) ? (App.Favorites.deck() || []) : [];
       } catch (e) { return []; }
     }
 
+    // user-defined
     if (key.indexOf('user-') === 0){
       var u = App.dictRegistry.user || {};
       var d = u[key] && u[key].words;
       return Array.isArray(d) ? d : [];
     }
 
+    // builtin
     if (window.decks && Array.isArray(window.decks[key])) return window.decks[key];
 
     var canon = normalizeKey(key);
@@ -146,7 +150,20 @@
     pickDefaultKey: pickDefaultKey
   };
 })();
+/* -------------------------------  К О Н Е Ц  ------------------------------- */
 
+/* ---- MERGED FROM: app.addon.sets.js ---- */
+/*!
+ * app.addon.sets.js — Lexitron (carousel-safe)
+ * Version: 1.5.2
+ * Date: 2025-09-22
+ *
+ * Minimal, conservative changes from baseline:
+ *  - keep API shape and state keys (activeByDeck, completedByDeck)
+ *  - wrap to first set after the last (carousel), regardless of completion state of others
+ *  - DO NOT call UI renderers from here (avoid double renders / flicker)
+ *  - ensure App.state.index is clamped to new set bounds
+ */
 (function(){
   const App = window.App || (window.App = {});
   const S = App.Sets || (App.Sets = {});
@@ -154,6 +171,7 @@
   const LS_KEY = 'sets.progress.v1';
   const DEFAULT_SET_SIZE = 50;
 
+  // state
   S.state = S.state || { activeByDeck: {}, completedByDeck: {} };
 
   function loadLS(){
@@ -200,6 +218,7 @@
     return { start, end };
   }
 
+  // Public API kept compatible with baseline
   S.setTotalCount = function(){ return setCount(getDeck().length); };
   S.activeBounds = function(){
     const len = getDeck().length;
@@ -212,6 +231,7 @@
     if (!Number.isFinite(i) || i < 0) i = 0;
     const total = setCount(getDeck().length);
     if (i >= total) i = 0;
+    // persist normalized value
     if (S.state.activeByDeck[k] !== i) { S.state.activeByDeck[k] = i; saveLS(); }
     return i;
   };
@@ -222,8 +242,10 @@
     S.state.activeByDeck[k] = clamped;
     saveLS();
 
+    // Keep trainer in sync (idempotent)
     try { if (App.Trainer && typeof App.Trainer.setBatchIndex === 'function') App.Trainer.setBatchIndex(clamped, k); } catch(_){}
 
+    // Clamp absolute card index to new bounds
     try {
       const b = boundsForSet(clamped);
       if (App.state && (App.state.index < b.start || App.state.index >= b.end)) {
@@ -232,6 +254,7 @@
       }
     } catch(_){}
 
+    // Notify (no UI rendering here)
     try { document.dispatchEvent(new CustomEvent('sets:active-changed',{detail:{ key:k, index:clamped }})); } catch(_){}
   };
   S.isSetDone = function(i){
@@ -262,6 +285,7 @@
     } catch(_){ return false; }
   }
 
+  // Carousel auto-advance — conservative: only wrap after confirmed completion
   S.checkCompletionAndAdvance = function(){
     const total = S.setTotalCount();
     if (total <= 0) return;
@@ -273,6 +297,7 @@
     S.setActiveSetIndex(next);
   };
 
+  // Optional utility: clear only completion marks (keep stars)
   S.clearCompletedMarks = function(){
     const k = deckKey();
     if (S.state.completedByDeck && S.state.completedByDeck[k]) {
@@ -281,6 +306,7 @@
     }
   };
 
+  // init
   loadLS();
   S._save = saveLS;
 })();

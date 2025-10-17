@@ -1,5 +1,8 @@
+// deck_sr.js — автогенерация из Excel
+// Формат элементов: { id: N, word: "sr", uk: "укр", ru: "рус" }
 window.decks = window.decks || {};
 
+// === SR_VERBS ===
 window.decks.sr_verbs = [
   { id: 1, word: "kuvati", uk: "готувати", ru: "готовить" },
   { id: 2, word: "pržiti", uk: "смажити", ru: "жарить" },
@@ -251,6 +254,7 @@ window.decks.sr_verbs = [
   { id: 248, word: "uneti", uk: "занести/внести", ru: "внести/занести" }
 ];
 
+// === SR_NOUNS ===
 window.decks.sr_nouns = [
   { id: 1, word: "novac", uk: "гроші", ru: "деньги" },
   { id: 2, word: "biti", uk: "бути", ru: "быть" },
@@ -957,6 +961,7 @@ window.decks.sr_nouns = [
   { id: 703, word: "decembar", uk: "грудень", ru: "декабрь" }
 ];
 
+// === SR_ADVERBS ===
 window.decks.sr_adverbs = [
   { id: 1, word: "sada", uk: "зараз", ru: "сейчас" },
   { id: 2, word: "samo", uk: "тільки", ru: "только" },
@@ -1020,6 +1025,7 @@ window.decks.sr_adverbs = [
   { id: 60, word: "naravno", uk: "звичайно/звісно", ru: "конечно" }
 ];
 
+// === SR_ADJECTIVES ===
 window.decks.sr_adjectives = [
   { id: 1, word: "dobar", uk: "добрий", ru: "хороший" },
   { id: 2, word: "loš", uk: "поганий", ru: "плохой" },
@@ -1102,6 +1108,7 @@ window.decks.sr_adjectives = [
   { id: 79, word: "besmislen", uk: "безглуздий", ru: "бессмысленный" }
 ];
 
+// === SR_PREPOSITIONS ===
 window.decks.sr_prepositions = [
   { id: 1, word: "u", uk: "в", ru: "в" },
   { id: 2, word: "na", uk: "на", ru: "на" },
@@ -1145,6 +1152,7 @@ window.decks.sr_prepositions = [
   { id: 40, word: "prema napolje", uk: "назовні", ru: "наружу" }
 ];
 
+// === SR_PRONOUNS ===
 window.decks.sr_pronouns = [
   { id: 1, word: "ja", uk: "я", ru: "я" },
   { id: 2, word: "ti", uk: "ти", ru: "ты" },
@@ -1183,6 +1191,7 @@ window.decks.sr_pronouns = [
   { id: 35, word: "te", uk: "тебе (кл.)", ru: "тебя (кл.)" }
 ];
 
+// === SR_NUMBERS ===
 window.decks.sr_numbers = [
   { id: 1, word: "jedan", uk: "один", ru: "один" },
   { id: 2, word: "dva", uk: "два", ru: "два" },
@@ -1221,6 +1230,7 @@ window.decks.sr_numbers = [
   { id: 35, word: "poslednji", uk: "останній", ru: "последний" }
 ];
 
+// === SR_CONJUNCTIONS ===
 window.decks.sr_conjunctions = [
   { id: 1, word: "i", uk: "і", ru: "и" },
   { id: 2, word: "ili", uk: "або", ru: "или" },
@@ -1244,6 +1254,7 @@ window.decks.sr_conjunctions = [
   { id: 20, word: "pa", uk: "і/та/так", ru: "и/да/так" }
 ];
 
+// === SR_PARTICLES ===
 window.decks.sr_particles = [
   { id: 1, word: "baš", uk: "саме/прямо", ru: "прямо/именно" },
   { id: 2, word: "već", uk: "вже/та й", ru: "уже/да уж" },

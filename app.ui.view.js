@@ -1,3 +1,4 @@
+// --- Mode helpers (Normal vs Hard) ---
 (function(){
   const App = window.App || (window.App = {});
   App.settings = App.settings || {};
@@ -9,13 +10,26 @@
   App.getReverseThreshold = function(){
     return (App.getMode() === 'normal') ? 3.0 : 2.5;
   };
+  // bridge to save
   App.saveSettings = App.saveSettings || function(s){ try{ localStorage.setItem('lexitron.settings', JSON.stringify(s||App.settings||{})); localStorage.setItem('lexitron.mode', App.getMode()); }catch(_){ } };
 })();
+
+/*!
+ * app.ui.view.js — Lexitron
+ * Version: 1.6.2 (full-deck source, single-slice per set)
+ * Date: 2025-09-22
+ *
+ * Changes in this build (safe, minimal):
+ *  - Added getFullDeck() that always returns the FULL dictionary deck (no trainer slices).
+ *  - current(), renderCard(), nextWord() now use full deck and slice it ONCE by App.Sets.activeBounds().
+ *  - No other behavior changed (keeps absolute App.state.index semantics and prior bugfixes).
+ */
 
 (function () {
   const App = window.App || (window.App = {});
   const D = App.DOM || (App.DOM = {});
 
+  // ─ helpers ─
   function keyLang(key){
     const m = String(key||'').match(/^([a-z]{2})_/i);
     return m ? m[1].toLowerCase() : 'xx';
@@ -23,6 +37,7 @@
   function langOfKey(k){ try{ const m = String(k||'').match(/^([a-z]{2})_/i); return m?m[1].toLowerCase():null; }catch(e){ return null; } }
   function isEndlessDict(key){ return key === 'mistakes' || key === 'fav' || key === 'favorites'; }
 
+  // Always return FULL deck of active dictionary (no trainer slices)
   function getFullDeck() {
     try {
       return (App.Decks && App.Decks.resolveDeckByKey)
@@ -33,6 +48,7 @@
     }
   }
 
+  // ─ title + set stats ─
   function renderDictTitle(){
     try{
       const el = document.getElementById('dictActiveTitle');
@@ -100,6 +116,7 @@
     });
   }
 
+  // current word based on ABSOLUTE index, normalized to active set bounds, from FULL deck
   function current() {
     const deck = getFullDeck();
     if (!deck.length) return { id:  - App.getStarStep(), word: '', uk: '', ru: '' };
@@ -121,6 +138,7 @@
     return reverse;
   }
 
+  // ─ variants (with dedup) ─
   function drawOptions(correct, pool) {
     const uniq = [];
     const seen = new Set();
@@ -156,6 +174,7 @@
     D.optionsRow.appendChild(wrap);
   }
 
+  // ─ mistakes pool (same source/dictLang only) ─
   function getMistakesDistractorPool(currentWord) {
     const out = [];
     const seen = new Set();
@@ -220,6 +239,7 @@
     return (App && App.Trainer && typeof App.Trainer.sampleNextIndexWeighted==="function") ? App.Trainer.sampleNextIndexWeighted(sub) : Math.floor(Math.random()*sub.length);
   }
 
+  // ─ render & stats ─
 function renderStars() {
   const w = current();
   try {
@@ -241,6 +261,7 @@ if (!w) return;
     score = (App.state && App.state.stars && App.state.stars[App.starKey(w.id)]) || 0;
   }
 
+  // базовый слой целых звёзд
   const host = App.DOM && App.DOM.starsEl ? App.DOM.starsEl : document.getElementById('stars');
   if (!host) return;
   host.innerHTML = '';
@@ -252,6 +273,7 @@ if (!w) return;
     host.appendChild(s);
   }
 
+  // поверх — дробная маска
   try {
     if (window.HalfStars && typeof HalfStars.render === 'function') {
       HalfStars.render(score, max);
@@ -304,6 +326,7 @@ if (!w) return;
       }
     } catch (e) {}
   }
+  // Apply CSS class to trainer card for colored mode corners
   function applyCardModeClass(){
     try{
       var card = document.querySelector('.card');
@@ -424,6 +447,7 @@ if (!w) return;
   }
 
   function onChoice(btn, correct) {
+  // patched: events will be emitted inside branches
 
     const w = current();
     const key = (App.dictRegistry && App.dictRegistry.activeKey) || null;
@@ -451,7 +475,7 @@ if (!w) return;
       }
       renderStars();
       renderSetStats(); updateStats();
-      
+
       setTimeout(nextWord, 500);
       return;
     }
@@ -486,6 +510,7 @@ if (!w) return;
 
   function onIDontKnow(){
   const w = current(); if (!w) return;
+  // highlight correct and disable options
   try{
     const row = App.DOM?.optionsRow || document.getElementById('optionsRow');
     if (row){
@@ -494,7 +519,9 @@ if (!w) return;
       row.querySelectorAll('button.optionBtn').forEach(b => b.disabled = true);
     }
   }catch(_){}
+  // fire event for UI listeners, but do NOT change progress
   try { document.dispatchEvent(new CustomEvent('lexitron:idk', { detail:{ word:w } })); } catch(_){}
+  // do not touch stars, totals, or mistakes
   renderStars();
   updateStats();
   setTimeout(nextWord, 500);
@@ -572,6 +599,7 @@ if (!w) return;
         localStorage.setItem('lexitron.activeKey', String(key));
       }catch(_){}
       App.saveDictRegistry && App.saveDictRegistry();
+      // reset trainer indices to start from beginning like manual row click
       if (App.state){
         App.state.index = 0;
         try{
@@ -579,6 +607,7 @@ if (!w) return;
           else App.state.lastIndex = 0;
         }catch(_){ App.state.lastIndex = 0; }
       }
+      // refresh UI to reflect new deck
       try{ if (typeof renderSetStats==='function') renderSetStats(); }catch(_){}
       try{ if (typeof updateSpoilerHeader==='function') updateSpoilerHeader(); }catch(_){}
       try{ App._renderSetsBarOriginal && App._renderSetsBarOriginal(); }catch(_){}
@@ -610,6 +639,7 @@ function renderDictList() {
         const row = makeDictRow('fav');
         if (!row) return;
         host.appendChild(row);
+        // compute favorites count for current language
         let cnt = 0;
         try{
           App.migrateFavoritesToV2 && App.migrateFavoritesToV2();
@@ -648,6 +678,7 @@ function renderDictList() {
   try {
     App.migrateFavoritesToV2 && App.migrateFavoritesToV2();
     const v2 = (App.state && App.state.favorites_v2) || {};
+    // determine active dict language: dictsLangFilter -> studyLang -> ui lang
     const lang = (App.settings && (App.settings.dictsLangFilter || App.settings.studyLang || App.settings.lang)) || null;
     if (!lang) return false;
     let cnt = 0;
@@ -706,6 +737,7 @@ function renderDictList() {
         if (!(await App.showConfirmModal({text: msg, title: App.i18n().confirmTitle, okText: App.i18n().confirmOk, cancelText: App.i18n().confirmCancel, title: (App.i18n&&App.i18n().confirmTitle)||'Подтверждение'}))) return;
         if (App.Mistakes && typeof App.Mistakes.clearActive==='function') App.Mistakes.clearActive();
 
+        // After clearing, auto-switch to a sensible default deck (prefer verbs for current dict language)
         var defKey = null;
         try {
           if (App.Decks && typeof App.Decks.pickDefaultKey === 'function') {
@@ -714,6 +746,7 @@ function renderDictList() {
             var arr = App.Decks.builtinKeys() || [];
             var lang = (App.settings && (App.settings.dictsLangFilter || App.settings.studyLang || App.settings.lang)) || null;
             if (lang) {
+              // prefer verbs for this language if available
               var verbKey = null;
               for (var i=0;i<arr.length;i++){
                 var k = arr[i];
@@ -783,7 +816,7 @@ function renderDictList() {
     row.appendChild(actions);
 
     row.addEventListener('click', () => {
-      
+
       try{ localStorage.setItem('lexitron.deckKey', String(key)); localStorage.setItem('lexitron.activeKey', String(key)); }catch(_){}
       try{ if (typeof updateSpoilerHeader==='function') updateSpoilerHeader(); }catch(_){ }
       try{ if (typeof renderSetStats==='function') renderSetStats(); }catch(_){ }
@@ -817,13 +850,15 @@ if (row.classList.contains('disabled')) return;
   }
 
   const FLAG_EMOJI = { ru:'🇷🇺', uk:'🇺🇦', en:'🇬🇧', de:'🇩🇪', es:'🇪🇸', fr:'🇫🇷', it:'🇮🇹', pl:'🇵🇱', sr:'🇷🇸', tr:'🇹🇷' };
-  
+
+  // Preferred key for a language = the FIRST key from the currently used sorted order
   function pickPreferredKeyForLang(langCode) {
     try{
       const all = (App.Decks && typeof App.Decks.builtinKeys === 'function')
         ? (App.Decks.builtinKeys() || [])
         : Object.keys(window.decks || {});
       let byLang = all.filter(k => String(k).indexOf(langCode + '_') === 0);
+      // use the same sort routine the list uses (verbs appear first visually)
       try{ byLang = (typeof _sortKeysByCategory==='function') ? _sortKeysByCategory(byLang) : byLang; }catch(_){}
       return byLang.length ? byLang[0] : null;
     }catch(_){ return null; }
@@ -853,6 +888,8 @@ App.renderLangFlags = function(){
       b.textContent = FLAG_EMOJI[lg] || lg.toUpperCase();
       b.addEventListener('click', () => {
         App.settings.dictsLangFilter = lg;
+        /* do not persist settings here to avoid clobbering registration flags */
+        /* AUTOFILL-PICK-FIRST */
         try{
           var _pref = (typeof pickPreferredKeyForLang==='function') ? pickPreferredKeyForLang(lg) : null;
           if (_pref) {
@@ -963,6 +1000,7 @@ renderDictList();
   }
 })();
 
+// Info modal bootstrap (unchanged)
 (function(){
   const infoBtn   = document.getElementById('btnInfo');
   const modal     = document.getElementById('infoModal');
@@ -975,11 +1013,13 @@ renderDictList();
       const t = (typeof App.i18n==='function') ? (App.i18n()||{}) : {};
       if (titleEl && t.infoTitle) titleEl.textContent = t.infoTitle;
       if (Array.isArray(t.infoSteps) && contentEl){
+        // keep existing content; no wipe
         const ul = document.createElement('ul');
         t.infoSteps.forEach(function(s){ const li=document.createElement('li'); li.textContent=String(s||''); ul.appendChild(li); });
         contentEl.appendChild(ul);
       }
-    
+
+      // LEXI: ensure our settings captions/buttons are localized
       (function(){
         try{
           const msEl = contentEl && contentEl.querySelector('[data-i18n="modeSelection"]');
@@ -990,6 +1030,7 @@ renderDictList();
           if (expBtn && t.backupExport) expBtn.textContent = String(t.backupExport);
           const impBtn = document.getElementById('btnBackupImport');
           if (impBtn && t.backupImport) impBtn.textContent = String(t.backupImport);
+          // mode labels if template used ours
           const mN = contentEl && contentEl.querySelector('[data-i18n="modeNormal"]');
           if (mN && t.modeNormal) mN.textContent = String(t.modeNormal);
           const mH = contentEl && contentEl.querySelector('[data-i18n="modeHard"]');
@@ -1009,6 +1050,7 @@ renderDictList();
   else fillFromI18n();
 })();
 
+// Settings modal bootstrap (mirrors Info modal; safe & isolated)
 (function(){
   const btn   = document.getElementById('btnSettings');
   const modal = document.getElementById('settingsModal');
@@ -1030,7 +1072,8 @@ renderDictList();
         if (normalEl && t.modeNormal) normalEl.textContent = String(t.modeNormal);
         const hardEl = contentEl.querySelector('[data-i18n="modeHard"]');
         if (hardEl && t.modeHard) hardEl.textContent = String(t.modeHard);
-    
+
+        // Use the i18n text if present; fallback string otherwise
         const text = (t.settingsInDev!=null) ? String(t.settingsInDev) : '';
         (function(){
           const sel = '[data-i18n="settingsInDev"]';
@@ -1057,6 +1100,8 @@ renderDictList();
   else fillFromI18n();
 })();
 
+// showMotivation removed
+// Info modal wiring v1.6.2 (integrated)
 (function(){
   var modal   = document.getElementById('infoModal');
   if (!modal) return;
@@ -1091,18 +1136,29 @@ function close(){ modal.classList.add('hidden'); }
   else fill();
 })();
 
+/* ---- MERGED FROM: stars.half.visual.patch.js ---- */
+/*!
+ * stars.half.visual.patch.js
+ * Version: 1.6.1
+ *  - Рисует дробные ★
+ *  Подключать последним, после всех скриптов
+ */
 (function(){
   'use strict';
   var D=document,W=window;
 
+  // CSS
   var css=[
   '#stars.halfstars{display:flex;gap:6px;align-items:center;font-size:22px}', // базовый размер
 '#stars.halfstars .star{position:relative;display:inline-block;width:1em;height:1em;line-height:1}',
 
+/* контур пустой звезды */
 '#stars.halfstars .star::before{content:"☆";position:absolute;left:0;top:0;right:0;bottom:0;color:#cbd5e1;opacity:.35}',
 
+/* заливка — управляем шириной через --p (0%..100%) */
 '#stars.halfstars .star::after{content:"★";position:absolute;left:0;top:0;bottom:0;width:var(--p,0%);overflow:hidden;color:#fbbf24;white-space:nowrap;}',
 
+/* плавное изменение ширины заливки */
 '#stars.halfstars .star::after{transition:width .15s ease}',
   ].join('');
   var st=D.createElement('style'); st.textContent=css; (D.head||D.documentElement).appendChild(st);
@@ -1130,6 +1186,7 @@ function close(){ modal.classList.add('hidden'); }
     }
   }
 
+  // события
   D.addEventListener('lexitron:word-shown',e=>render(valFor(e?.detail?.word)));
   D.addEventListener('lexitron:answer-correct',e=>render(valFor(e?.detail?.word)));
   D.addEventListener('lexitron:idk',e=>render(valFor(e?.detail?.word)));
@@ -1139,6 +1196,11 @@ function close(){ modal.classList.add('hidden'); }
 
   W.HalfStars={render};
 
+/* ===== merged from lang-flag.fix.js ===== */
+/*!
+ * lang-flag.fix.js — keeps header language flag in sync
+ * Version: 1.6.1
+ */
 (function(){
   'use strict';
 
@@ -1186,6 +1248,7 @@ function close(){ modal.classList.add('hidden'); }
 
 })();
 
+// Donate modal bootstrap (mirrors Settings modal)
 (function(){
   const btn   = document.getElementById('btnDonate');
   const modal = document.getElementById('donateModal');
@@ -1218,6 +1281,7 @@ function close(){ modal.classList.add('hidden'); }
   else fillFromI18n();
 })();
 
+// override unlock threshold to depend on mode
 (function(){
   try{
     const App = window.App || {};
@@ -1227,6 +1291,7 @@ function close(){ modal.classList.add('hidden'); }
   }catch(_){}
 })();
 
+// --- Added for mode switch protection ---
 App.hasProgress = function(){
   try {
     if (!App.Decks) return false;
@@ -1254,8 +1319,11 @@ App.resetProgress = function(){
       }
     }
     try { localStorage.removeItem('lexitron.progress'); } catch(_){}
+    // optionally re-render UI
     if (typeof App.renderStats === 'function') App.renderStats();
 };
+// --- End added ---
+// Settings toggle wiring (Normal/Hard)
 (function(){
   const App = window.App || (window.App = {});
   function syncFromSettings(){
@@ -1272,8 +1340,9 @@ App.resetProgress = function(){
     if (!el) return;
     const newIsHard = !!el.checked;
     const currentIsHard = (App.getMode() === 'hard');
-    
+
     if (newIsHard !== currentIsHard) {
+      // Ask confirmation and reset progress for CURRENT dictionary (all sets) to avoid mixed star-steps
       var dictKey = (App.dictRegistry && App.dictRegistry.activeKey) || null;
       var msg = App.i18n().confirmModeReset;
       if (!(await App.showConfirmModal({text: msg, title: App.i18n().confirmTitle, okText: App.i18n().confirmOk, cancelText: App.i18n().confirmCancel, title: (App.i18n&&App.i18n().confirmTitle)||'Подтверждение'}))) { el.checked = currentIsHard; // revert toggle
@@ -1296,12 +1365,13 @@ App.resetProgress = function(){
       } catch(_){}
       try { if (typeof renderStars === 'function') renderStars(); } catch(_){}
     }
-    
+
     const isHard = newIsHard;
     App.settings = App.settings || {};
     App.settings.mode = isHard ? 'hard' : 'normal';
     try{ localStorage.setItem('lexitron.mode', App.settings.mode); }catch(_){}
     if (typeof App.saveSettings === 'function') App.saveSettings(App.settings);
+    // re-render current card/stats to reflect new step/threshold immediately
     try{ if (typeof renderStars==='function') renderStars(); }catch(_){}
     try{ if (typeof App._renderSetsBarOriginal==='function') App._renderSetsBarOriginal(); try{ if (typeof renderSetStats==='function') renderSetStats(); }catch(_){ }
       try{ if (typeof updateSpoilerHeader==='function') updateSpoilerHeader(); }catch(_){ } try{ if (typeof renderSetStats==='function') renderSetStats(); }catch(_){ }
@@ -1312,7 +1382,10 @@ if (document.readyState === 'loading') {
   } else {
     syncFromSettings();
   }
+  // also resync when i18n changes or settings modal opens could be added if needed
 })();
+// [fix] removed external DOMContentLoaded/applyFromUI hook; handled inside IIFE
+// === Unified Confirm Modal API ===
 (function(){
   const App = window.App || (window.App = {});
   App.showConfirmModal = function(opts){
@@ -1372,12 +1445,15 @@ if (document.readyState === 'loading') {
         modal.addEventListener('click', onBackdrop, true);
         open();
       }catch(e){
+        // Fallback to native confirm if something goes wrong
         resolve(window.confirm(opts.text || 'Вы уверены?'));
       }
     });
   };
 })();
+// === End Unified Confirm Modal API ===
 
+// --- injected wrapper: spoilers in main sets panel (keeps original logic) ---
 (function(){
   var G = (typeof window!=='undefined')?window:self;
   var App = G.App || (G.App={});
@@ -1409,6 +1485,7 @@ if (document.readyState === 'loading') {
   }
 
   function renderSpoilers(host){
+    // Wrap ONLY the current deck's set tiles into a single spoiler.
     if (!host) host = document.getElementById('setsBar');
     if (!host) return;
     host.innerHTML='';
@@ -1441,6 +1518,7 @@ if (document.readyState === 'loading') {
     var k = activeKey();
     var details = document.createElement('details');
     details.className='dictSpoiler';
+    // default closed
     var summary = document.createElement('summary');
     summary.innerHTML = '<span class="flag" id="dictFlag"></span><span class="name" id="dictTitleInSpoiler"></span>'; updateSpoilerHeader();
     var body = document.createElement('div');
@@ -1454,10 +1532,13 @@ if (document.readyState === 'loading') {
       var so = localStorage.getItem('lexitron.spoilerOpen'); if (so==='1') details.setAttribute('open','open');
     }catch(_){}
 
+    // When opened: temporarily swap IDs so original renderer draws tiles inside body
     details.addEventListener('toggle', function(){
       if (details.open){
+        // refresh title (name may change with locale)
         var kk = activeKey();
         summary.innerHTML = '<span class="flag" id="dictFlag"></span><span class="name" id="dictTitleInSpoiler"></span>'; updateSpoilerHeader();
+        // ID-swap trick
         var origHost = document.getElementById('setsBar');
         var had = false, oldId = '';
         if (origHost){
@@ -1485,6 +1566,7 @@ if (document.readyState === 'loading') {
     });
   }
 
+  // Expose new public renderer that replaces the sets panel with spoilers
   if (App.ui && App.ui._renderSetsBarOriginal) {
     App.ui.renderSetsBar = function(host){
   var el = host || document.getElementById('setsBar');
@@ -1509,6 +1591,7 @@ if (document.readyState === 'loading') {
 };
   }
 
+  // Re-localize summary names after language change
   if (App.applyLang && !App.__applyLangSpoilers) {
     var orig = App.applyLang.bind(App);
     App.applyLang = function(){
@@ -1527,6 +1610,7 @@ if (document.readyState === 'loading') {
   }
 })(); // end injected wrapper
 
+// --- Hard-bind sets rendering to in-spoiler containers (no ID swapping) ---
 (function(){
   function updateSpoilerHeader(){
   try{
@@ -1536,17 +1620,22 @@ if (document.readyState === 'loading') {
     var k = (App.dictRegistry && App.dictRegistry.activeKey) || null;
     if (!k){ nameEl.textContent='—'; flagEl.textContent='📚'; return; }
 
+    // Helper: map lang code -> flag (reuse same mapping as in app.decks.js)
     function flagForLang(lg){
       var MAP = { en:'🇬🇧', de:'🇩🇪', fr:'🇫🇷', es:'🇪🇸', it:'🇮🇹', pl:'🇵🇱', sr:'🇷🇸', ru:'🇷🇺', uk:'🇺🇦', tr:'🇹🇷' };
       return MAP[(lg||'').toLowerCase()] || '🌐';
     }
 
+    // Special handling for virtual decks
     var kk = String(k).toLowerCase();
     if (kk === 'fav' || kk === 'favorites'){
+      // Title: always localized "Favorites"
       var favTitle = (App.Decks.resolveNameByKey && App.Decks.resolveNameByKey('favorites')) || 'Избранное';
       nameEl.textContent = favTitle;
 
+      // Flag: chosen language for the favorites filter (fallbacks: studyLang -> ui lang)
       var lg = (App.settings && App.settings.dictsLangFilter) || (App.settings && App.settings.studyLang) || (App.settings && App.settings.lang) || null;
+      // As a last resort, try to infer from the first word's source if available
       if (!lg){
         try{
           var deck = (App.Decks.resolveDeckByKey && App.Decks.resolveDeckByKey('favorites')) || [];
@@ -1561,9 +1650,11 @@ if (document.readyState === 'loading') {
       return;
     }
     if (kk === 'mistakes'){
+      // Title: always localized "Mistakes"
       var misTitle = (App.Decks.resolveNameByKey && App.Decks.resolveNameByKey('mistakes')) || 'Мои ошибки';
       nameEl.textContent = misTitle;
 
+      // Flag: try to use active mistakes bucket language (same strategy as Mistakes.activeDictLang)
       var lg2 = (App.settings && App.settings.dictsLangFilter) || null;
       if (!lg2){
         try{
@@ -1579,10 +1670,12 @@ if (document.readyState === 'loading') {
       return;
     }
 
+    // Default: regular decks as before
     flagEl.textContent = App.Decks.flagForKey ? (App.Decks.flagForKey(k) || '📚') : '📚';
     nameEl.textContent = App.Decks.resolveNameByKey ? (App.Decks.resolveNameByKey(k) || '') : '';
   }catch(_){}
 }
+  // expose for other modules
   window.updateSpoilerHeader = updateSpoilerHeader;
 
   function rebind(){
@@ -1604,6 +1697,7 @@ if (document.readyState === 'loading') {
   if (document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', function(){ updateSpoilerHeader(); rebind(); }, {once:true}); }
   else { updateSpoilerHeader(); rebind(); }
 
+  // re-run on language or deck change
   if (window.App){
     if (!App.__spoilerHeaderHook){
       var ap = App.applyLang && App.applyLang.bind(App);
@@ -1615,11 +1709,15 @@ if (document.readyState === 'loading') {
   }
 })();
 
+// applyFromUI removed, handled by App.init()
+
+/* === Info Modal: Информация (robust show + i18n + tabs) — 2025-10-14 === */
 (function(){
   try{
     const modal = document.getElementById('infoModal');
     if (!modal) return;
 
+    // Build/ensure frame and UI
     let frame = modal.querySelector('.modalFrame');
     if (!frame){
       frame = document.createElement('div');
@@ -1658,7 +1756,7 @@ if (document.readyState === 'loading') {
           <div class="actionsRow">
             <button id="btnCheckUpdates" class="btnPill"></button>
           </div>
-          
+
           <div class="aboutSep"></div>
 <div class="regBlock">
             <label for="regKey" id="regKeyLabel"></label>
@@ -1675,6 +1773,7 @@ if (document.readyState === 'loading') {
       </div>
     `;
 
+    // Nodes
     const tabInstr = document.getElementById('tab-instr');
     const tabAbout = document.getElementById('tab-about');
     const panelInstr = document.getElementById('panel-instr');
@@ -1692,6 +1791,7 @@ if (document.readyState === 'loading') {
     const licStatusEl = document.getElementById('licStatus');
     const licUserEl = document.getElementById('licUser');
 
+    // i18n helpers
     function lang(){ return (window.App && App.settings && App.settings.lang) || (App.settings && (App.settings.uiLang || App.settings.lang)) || 'uk'; }
     function pack(){
       const L = lang();
@@ -1712,6 +1812,7 @@ regStubHint:'Placeholder — activation logic will be added later.'}
       return (d[L] && d[L][k]) || (d.ru[k]) || def || '';
     }
 
+    // Fill labels
     function fillLabels(){
       titleEl.textContent = T('infoTitle');
       tabInstr.textContent = T('tabInstruction');
@@ -1723,6 +1824,7 @@ regStubHint:'Placeholder — activation logic will be added later.'}
       regHintEl.textContent = T('regStubHint');
     }
 
+    // Tabs control
     function switchTab(which){
       const instr = which==='instr';
       tabInstr.classList.toggle('active', instr);
@@ -1732,15 +1834,19 @@ regStubHint:'Placeholder — activation logic will be added later.'}
       tabInstr.setAttribute('aria-selected', instr?'true':'false');
       tabAbout.setAttribute('aria-selected', !instr?'true':'false');
     }
+    // Fix: lock modal body height to max of both tabs to avoid jumps
     function lockBodyHeight(){
       const body = modal.querySelector('.modalBody');
       if (!body) return;
+      // preserve which is active
       const instrActive = !panelInstr.classList.contains('hidden');
+      // temporarily show both to measure
       panelInstr.classList.remove('hidden');
       panelAbout.classList.remove('hidden');
       const h1 = panelInstr.scrollHeight;
       const h2 = panelAbout.scrollHeight;
       const maxH = Math.max(h1, h2, 240);
+      // restore visibility
       panelInstr.classList.toggle('hidden', !instrActive);
       panelAbout.classList.toggle('hidden', instrActive);
       body.style.height = maxH + 'px';
@@ -1749,17 +1855,22 @@ regStubHint:'Placeholder — activation logic will be added later.'}
     tabInstr.addEventListener('click', ()=> { switchTab('instr'); lockBodyHeight(); });
     tabAbout.addEventListener('click', ()=> { switchTab('about'); lockBodyHeight(); });
 
+    // Ensure state when modal becomes visible (even if opened by external code)
     function ensureOnShow(){
       fillLabels();                            renderAboutDynamic();
+// refresh i18n
       switchTab('instr');                // show only Instruction
       lockBodyHeight();                // fix height
     }
+    // run once
     ensureOnShow();
+    // observe class changes to detect show/hide
     try{
       const obs = new MutationObserver(()=>{ if (!modal.classList.contains('hidden')) ensureOnShow(); });
       obs.observe(modal, { attributes:true, attributeFilter:['class'] });
     }catch(_){}
 
+    // Content for Instruction
     try{
       const p = pack();
       if (Array.isArray(p.infoSteps)){
@@ -1767,6 +1878,7 @@ regStubHint:'Placeholder — activation logic will be added later.'}
       }
     }catch(_){}
 
+    // About content — render dynamic bits (version, license status) per current i18n/lang
     function renderAboutDynamic(){
       try{
         const meta = {
@@ -1788,11 +1900,13 @@ regStubHint:'Placeholder — activation logic will be added later.'}
       }catch(_){}
     }
     renderAboutDynamic();
+    // Close buttons
     function close(){ modal.classList.add('hidden'); }
     okBtn.addEventListener('click', close);
     xBtn.addEventListener('click', close);
     modal.addEventListener('click', e=>{ if (e.target===modal) close(); });
 
+    // Keyboard
     document.addEventListener('keydown', e=>{
       if (e.key==='Escape') close();
       if (e.key==='ArrowLeft' || e.key==='ArrowRight'){
@@ -1800,6 +1914,7 @@ regStubHint:'Placeholder — activation logic will be added later.'}
       }
     });
 
+    // Update check via SW stays same
     async function fetchRemoteVersion(){
       try{
         const r = await fetch('./app.core.js?ts='+Date.now(), {cache:'no-store'});
@@ -1837,10 +1952,12 @@ regStubHint:'Placeholder — activation logic will be added later.'}
       }
     });
 
+    // Expose opener if exists
     const infoBtn = document.getElementById('btnInfo');
     if (infoBtn) infoBtn.addEventListener('click', ensureOnShow);
 })();
 
+/* === [PATCH 2025-10-14] Info modal — i18n title fix, remove hint, add separator (safe) === */
 (function(){
   try{
     var modal = document.getElementById('infoModal');
@@ -1870,8 +1987,10 @@ regStubHint:'Placeholder — activation logic will be added later.'}
       var ti = modal.querySelector('#tab-instr'); if (ti && !ti.textContent.trim()) ti.textContent = tab1;
       var ta = modal.querySelector('#tab-about'); if (ta && !ta.textContent.trim()) ta.textContent = tab2;
 
+      // remove old hint block entirely
       var hint = modal.querySelector('#regHint'); if (hint) hint.remove();
 
+      // ensure separator after updates button
       var btnUpd = modal.querySelector('#btnCheckUpdates');
       if (btnUpd){
         var actions = btnUpd.closest('.actionsRow') || btnUpd.parentElement;
@@ -1883,6 +2002,7 @@ regStubHint:'Placeholder — activation logic will be added later.'}
       }
     }
 
+    // run when modal opens (class toggles)
     var run = function(){ if (!modal.classList.contains('hidden')) applyOnce(); };
     run();
     try{

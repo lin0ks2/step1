@@ -6,3 +6,4 @@ window.UIBus = (function(){
     emit: function(evt, data){ (map[evt]||[]).forEach(cb=>{ try{ cb(data); }catch(_){} }); }
   };
 })();
+/* -------------------------------  К О Н Е Ц  ------------------------------- */
